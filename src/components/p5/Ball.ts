@@ -1,6 +1,7 @@
 import { P5CanvasInstance } from '@p5-wrapper/react';
 import { Vector } from 'p5';
 import { Shape } from './../../App';
+import Drawer from './Drawer';
 export default class Ball {
     p5: P5CanvasInstance;
     shape: Shape;
@@ -10,26 +11,28 @@ export default class Ball {
     acceleration: Vector;
     shapeMap: Map<Shape, () => void>;
     shapes: Shape[];
+    drawer: Drawer;
     constructor(p5: P5CanvasInstance, shape: Shape, shapes: Shape[], size?: number, position?: Vector) {
         this.p5 = p5;
         this.shape = shape;
         this.shapes = shapes;
 
-        this.position = position || this.p5.createVector(0, 0);
+        this.position = position || this.p5.createVector(0.1, 0);
         this.size = size || 10;
 
         this.acceleration = this.p5.createVector(0, 0);
         this.velocity = this.p5.createVector(0, 0);
 
         this.shapeMap = new Map();
+        this.drawer = new Drawer(this.p5);
         this.populateShapeMap();
         // Purposefully not catching error. It is a developer's error, and thus needs to be uncaught
         this.ensureAllShapesInShapeMap();
     }
 
     private populateShapeMap(): void {
-        this.shapeMap.set("Square", () => this.drawSquare());
-        this.shapeMap.set("Circle", () => this.drawCircle());
+        this.shapeMap.set("Square", () => this.drawer.drawSquare(this.position, this.size));
+        this.shapeMap.set("Circle", () => this.drawer.drawCircle(this.position, this.size));
     }
 
     /**
@@ -55,15 +58,6 @@ export default class Ball {
         this.shapeMap.get(this.shape)!();
     }
 
-    private drawSquare(): void {
-        this.p5.rectMode(this.p5.CENTER);
-        this.p5.square(this.position.x, this.position.y, this.size);
-    }
-
-    private drawCircle(): void {
-        this.p5.circle(this.position.x, this.position.y, this.size);
-    }
-
     public applyForce(force: Vector) {
         const forceToApply = this.p5.createVector(0, 0);
         Vector.div(force, this.size, forceToApply);
@@ -76,10 +70,33 @@ export default class Ball {
         this.acceleration.mult(0); // Clear acceleration
     }
 
-    public checkEdges() {
+    public checkEdges(isInBoundary: boolean) {
         if (this.position.y > this.p5.height - this.size * 20.65) {
             this.velocity.y *= -0.9;
             this.position.y = this.p5.height - this.size * 20.65;
+        }
+
+        if (this.position.x > this.p5.width - this.size * 20.65) {
+            this.velocity.x *= -0.9;
+            this.position.x = this.p5.width - this.size * 20.65;
+        }
+
+        if (!isInBoundary) {
+            this.velocity.y *= -0.9;
+            this.velocity.x *= -0.9;
+            if (this.velocity.y < 0) {
+                this.position.y = this.position.y - this.size / 2;
+            } 
+            if (this.velocity.x < 0) {
+                this.position.x = this.position.x - this.size / 2;
+            }
+            if (this.velocity.y > 0) {
+                this.position.y = this.position.y + this.size / 2;
+            } 
+            if (this.velocity.x > 0) {
+                this.position.x = this.position.x + this.size / 2;
+            } 
+                
         }
     }
 }

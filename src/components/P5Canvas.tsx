@@ -3,6 +3,7 @@ import { Vector } from "p5";
 import { Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
+import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
     shape: Shape;
@@ -23,7 +24,7 @@ export default function P5Canvas(props: P5CanvasProps) {
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
             for (let i = 0; i < props.ballCount; i++) {
-                balls.push(new Ball(p5, props.ballShape, props.shapes));
+                balls.push(new Ball(p5, props.ballShape, props.shapes, 5));
             }
         }
 
@@ -34,15 +35,20 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
-            const boundary = new Boundary(p5, props.shape, props.shapes, 300, p5.createVector(0, 0));
+            const boundary = new Boundary(p5, props.shape, props.shapes, 100, p5.createVector(0, 0));
             boundary.createBoundary();
 
+            const drawer = new Drawer(p5);
             balls.forEach(ball => {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
                 ball.applyForce(gravity);
                 ball.update();
                 ball.display();
-                ball.checkEdges();
+                const edges = drawer.calculateVertices(ball.shape, ball.position, 100, 30);
+                const isInside = boundary.contains(ball.position);
+                console.log(isInside);
+                // Use constrain()???
+                ball.checkEdges(isInside);
             });
         }
 
