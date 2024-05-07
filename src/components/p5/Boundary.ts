@@ -39,8 +39,8 @@ export default class Boundary {
     }
 
     private populateContainsMap(): void {
-        this.containsMap.set("Square", () => this.pointInSquare(this.position));
-        this.containsMap.set("Circle", () => this.pointInCircle(this.position));
+        this.containsMap.set("Square", (point: Vector) => this.pointInSquare(point));
+        this.containsMap.set("Circle", (point: Vector) => this.pointInCircle(point));
     }
 
     /**
@@ -69,15 +69,23 @@ export default class Boundary {
     }
 
     private pointInCircle(point: Vector): boolean {
+        /*console.log('point x: ', point.x)
+        console.log('point y: ', point.y)
+        console.log('x: ', this.position.x)
+        console.log('y: ', this.position.y)
+        console.log('Dist: ', this.p5.dist(point.x, point.y, this.position.x, this.position.y));
+        console.log('Size: ', this.size);
+        console.log('----------------');
+        */
         return this.p5.dist(point.x, point.y, this.position.x, this.position.y) <= this.size;
     }
 
     private pointInSquare(point: Vector): boolean {
         return (
-            point.x >= this.position.x * this.size &&
-            point.x <= (this.position.x * this.size) + this.p5.width &&
-            point.y >= this.position.y * this.size &&
-            point.y <= (this.position.y * this.size) + this.p5.height
+            point.x >= this.position.x &&
+            point.x <= (this.position.x) + this.p5.width &&
+            point.y >= this.position.y &&
+            point.y <= (this.position.y) + this.p5.height
         );
     }
 

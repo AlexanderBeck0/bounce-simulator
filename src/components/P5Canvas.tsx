@@ -46,7 +46,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.display();
                 const edges = drawer.calculateVertices(ball.shape, ball.position, 100, 30);
                 const isInside = boundary.contains(ball.position);
-                console.log(isInside);
+                // console.log(isInside);
                 // Use constrain()???
                 ball.checkEdges(isInside);
             });
