@@ -3,6 +3,7 @@ import { Vector } from 'p5';
 import { Shape } from './../../App';
 import Drawer from './Drawer';
 export default class Ball {
+    //#region Variables
     p5: P5CanvasInstance;
     shape: Shape;
     size: number;
@@ -12,6 +13,7 @@ export default class Ball {
     shapeMap: Map<Shape, () => void>;
     shapes: Shape[];
     drawer: Drawer;
+    //#endregion
     constructor(p5: P5CanvasInstance, shape: Shape, shapes: Shape[], size?: number, position?: Vector) {
         this.p5 = p5;
         this.shape = shape;
@@ -58,12 +60,21 @@ export default class Ball {
         this.shapeMap.get(this.shape)!();
     }
 
+    //#region Movement
+    
+    /**
+     * Applys a force to the ball. Mutates {@link acceleration}
+     * @param force The force Vector to add to the ball
+     */
     public applyForce(force: Vector) {
         const forceToApply = this.p5.createVector(0, 0);
         Vector.div(force, this.size, forceToApply);
         this.acceleration.add(forceToApply);
     }
 
+    /**
+     * Updates the ball's {@link velocity}, {@link position}, and sets its {@link acceleration} to 0
+     */
     public update() {
         this.velocity.add(this.acceleration);
         this.position.add(this.velocity);
@@ -86,17 +97,18 @@ export default class Ball {
             this.velocity.x *= -0.9;
             if (this.velocity.y < 0) {
                 this.position.y = this.position.y - this.size / 2;
-            } 
+            }
             if (this.velocity.x < 0) {
                 this.position.x = this.position.x - this.size / 2;
             }
             if (this.velocity.y > 0) {
                 this.position.y = this.position.y + this.size / 2;
-            } 
+            }
             if (this.velocity.x > 0) {
                 this.position.x = this.position.x + this.size / 2;
-            } 
-                
+            }
+
         }
     }
+    //#endregion
 }

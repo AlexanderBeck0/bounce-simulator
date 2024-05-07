@@ -2,17 +2,39 @@ import { P5CanvasInstance } from '@p5-wrapper/react';
 import { Vector } from 'p5';
 import { Shape } from './../../App';
 import Drawer from './Drawer';
+
+/**
+ * @example const boundary = new Boundary(p5, props.shape, props.shapes, 100);
+            boundary.createBoundary();
+ */
 export default class Boundary {
-    private p5: P5CanvasInstance;
-    shape: Shape;
-    size: number;
-    position: Vector;
+    //#region Variables
     velocity: Vector;
     acceleration: Vector;
-    private shapeMap: Map<Shape, () => void>;
-    private containsMap: Map<Shape, (point: Vector) => boolean>;
+    private p5: P5CanvasInstance;
+    public shape: Shape;
     private shapes: Shape[];
     private drawer: Drawer;
+    /**
+     * @default 100
+     * The size of the boundary.
+     */
+    public size: number;
+    /**
+     * @default p5.createVector(0, 0);
+     * The position of the boundary.
+     */
+    public position: Vector;
+    /**
+     * @example this.shapeMap.get(this.shape)!();
+     */
+    private shapeMap: Map<Shape, () => void>;
+    /**
+     * @example this.containsMap.get(this.shape)!(point);
+     */
+    private containsMap: Map<Shape, (point: Vector) => boolean>;
+
+    //#endregion
     constructor(p5: P5CanvasInstance, shape: Shape, shapes: Shape[], size?: number, position?: Vector) {
         this.p5 = p5;
         this.shape = shape;
@@ -33,11 +55,17 @@ export default class Boundary {
         this.ensureAllShapesInShapeMap();
     }
 
+    /**
+     * Used for initializing {@link shapeMap}
+     */
     private populateShapeMap(): void {
         this.shapeMap.set("Square", () => this.drawer.drawSquare(this.position, this.size));
         this.shapeMap.set("Circle", () => this.drawer.drawCircle(this.position, this.size));
     }
 
+    /**
+     * Used for initializing {@link containsMap}
+     */
     private populateContainsMap(): void {
         this.containsMap.set("Square", (point: Vector) => this.pointInSquare(point));
         this.containsMap.set("Circle", (point: Vector) => this.pointInCircle(point));
@@ -68,6 +96,8 @@ export default class Boundary {
         this.shapeMap.get(this.shape)!();
     }
 
+    //#region Collisions
+    
     private pointInCircle(point: Vector): boolean {
         /*console.log('point x: ', point.x)
         console.log('point y: ', point.y)
@@ -81,14 +111,21 @@ export default class Boundary {
     }
 
     private pointInSquare(point: Vector): boolean {
-        return (
-            point.x >= this.position.x &&
-            point.x <= (this.position.x) + this.p5.width &&
-            point.y >= this.position.y &&
-            point.y <= (this.position.y) + this.p5.height
-        );
+        // return (
+        //     point.x >= this.position.x &&
+        //     point.x <= (this.position.x) + this.p5.width &&
+        //     point.y >= this.position.y &&
+        //     point.y <= (this.position.y) + this.p5.height
+        // );
+        return this.p5.dist(point.x, point.y, this.position.x, this.position.y) <= this.size;
     }
 
+    /**
+     * @deprecated
+     * @param point The position Vector of the point
+     * @param vertices An array of Vectors representing the vertices of a boundary
+     * @returns True if the point is in the shape
+     */
     public isPointInShape(point: Vector, vertices: Vector[]): boolean {
         let isInside = false;
         let minX = this.p5.width,
@@ -177,7 +214,13 @@ export default class Boundary {
         return isInside;
     }
 
+    /**
+     * Uses {@link containsMap this.containsMap}
+     * @param point A position Vector of a point
+     * @returns True if the object is in the shape
+     */
     public contains(point: Vector): boolean {
         return this.containsMap.get(this.shape)!(point);
     }
+    //#endregion
 }
