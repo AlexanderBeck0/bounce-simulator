@@ -68,12 +68,13 @@ export default class Drawer {
      * @returns An array of Vectors representing the Vertexs of the square
      */
     private calculateSquareVertices(position: Vector, size: number) {
-        return [
+        const verticies = [
             this.p5.createVector(position.x - size, position.y - size), // top-left
             this.p5.createVector(position.x + size, position.y - size), // top-right
             this.p5.createVector(position.x + size, position.y + size), // bottom-right
             this.p5.createVector(position.x - size, position.y + size)  // bottom-left
         ];
+        return verticies;
     }
 
     /**
@@ -87,7 +88,7 @@ export default class Drawer {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
             const angle = this.p5.map(i, 0, segments, 0, this.p5.TWO_PI);
-            const vx = position.x + this.p5.cos(angle) * radius;
+            const vx = position.x + this.p5.cos(angle) * radius ;
             const vy = position.y + this.p5.sin(angle) * radius;
             vertices.push(this.p5.createVector(vx, vy));
         }

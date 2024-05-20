@@ -24,7 +24,7 @@ export default function P5Canvas(props: P5CanvasProps) {
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
             for (let i = 0; i < props.ballCount; i++) {
-                balls.push(new Ball(p5, props.ballShape, props.shapes, 5));
+                balls.push(new Ball(p5, props.ballShape, props.shapes, 5, p5.createVector(Math.random() * 100, Math.random() * 100)));
             }
         }
 
@@ -41,12 +41,15 @@ export default function P5Canvas(props: P5CanvasProps) {
             const drawer = new Drawer(p5);
             balls.forEach(ball => {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
-                ball.applyForce(gravity);
+                // const rightForce: Vector = p5.createVector(0.1 * ball.size, 0);
+                ball.applyForce(gravity); 
+                // ball.applyForce(rightForce); 
                 ball.update();
                 ball.display();
-                const edges = drawer.calculateVertices(ball.shape, ball.position, 100, 30);
-                const isInside = boundary.contains(ball.position);
-                ball.checkEdges(isInside);
+                const edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
+                // const isInside = boundary.contains(ball.position);
+                // const isInside = boundary.isInside(ball.position, edges);
+                ball.checkEdges(edges);
             });
         }
 

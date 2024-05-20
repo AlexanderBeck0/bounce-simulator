@@ -97,7 +97,7 @@ export default class Boundary {
     }
 
     //#region Collisions
-    
+
     private pointInCircle(point: Vector): boolean {
         /*console.log('point x: ', point.x)
         console.log('point y: ', point.y)
@@ -118,100 +118,6 @@ export default class Boundary {
         //     point.y <= (this.position.y) + this.p5.height
         // );
         return this.p5.dist(point.x, point.y, this.position.x, this.position.y) <= this.size;
-    }
-
-    /**
-     * @deprecated
-     * @param point The position Vector of the point
-     * @param vertices An array of Vectors representing the vertices of a boundary
-     * @returns True if the point is in the shape
-     */
-    public isPointInShape(point: Vector, vertices: Vector[]): boolean {
-        let isInside = false;
-        let minX = this.p5.width,
-            maxX = 0,
-            minY = this.p5.height,
-            maxY = 0;
-
-        for (const v of vertices) {
-            if (v.x < minX) minX = v.x;
-            if (v.x > maxX) maxX = v.x;
-            if (v.y < minY) minY = v.y;
-            if (v.y > maxY) maxY = v.y;
-        }
-
-
-        if (point.x < minX || point.x > maxX || point.y < minY || point.y > maxY) {
-            return false;
-        }
-
-        let j = vertices.length - 1;
-        for (let i = 0; i < vertices.length; j = i++) {
-            // console.log("vertices[i].y > point.y: " + (vertices[i].y > point.y))
-            // console.log("vertices[j].y > point.y: " + (vertices[j].y > point.y))
-
-            const vix = vertices[i].x;
-            const viy = vertices[i].y;
-            const vjy = vertices[j].y;
-            const vjx = vertices[j].x;
-            const px = point.x;
-            const py = point.y;
-
-            // ### DEBUGGING ###
-            const doDebug = false;
-            if (doDebug) {
-                console.log('viy:', viy);
-                console.log('vjy:', vjy);
-                console.log('px:', px);
-                console.log('py:', py);
-                console.log('vjx:', vjx);
-                console.log('vix:', vix);
-
-                const isAboveVi = viy > py;
-                const isAboveVj = vjy > py;
-                console.log('Is above vi:', isAboveVi);
-                console.log('Is above vj:', isAboveVj);
-                const isAboveDifferent = isAboveVi !== isAboveVj;
-                console.log('Is above different:', isAboveDifferent);
-
-                if (isAboveDifferent) {
-                    console.log('First condition met');
-
-                    const vjxMinusVix = px - vix;
-                    const pyMinusViy = py - viy;
-                    const vjyMinusViy = vjy - viy;
-                    const denominator = vjyMinusViy;
-
-                    // if (vjxMinusVix === 0) isInside = true;
-                    const numerator = vjxMinusVix * pyMinusViy;
-                    console.log('vjx - vix:', vjxMinusVix);
-                    console.log('py - viy:', pyMinusViy);
-                    console.log('vjy - viy', vjyMinusViy);
-
-                    console.log('Numerator:', numerator);
-                    console.log('Denominator:', denominator);
-                    const numeratorDividedByDenominator = numerator / denominator;
-                    console.log('Numerator divided by denominator:', numeratorDividedByDenominator);
-
-                    const isPxLessThanCalculation = px < numeratorDividedByDenominator;
-                    console.log('Is px less than calculation:', isPxLessThanCalculation);
-
-                    if (isPxLessThanCalculation) {
-                        console.log('Second condition met');
-                        isInside = true;
-                    }
-                }
-                console.log('--------------------')
-            }
-            // ### END DEBUGGING ###
-
-            if ((viy > py) != (vjy > py) &&
-                px < ((vjx - vix) * (py - viy)) / ((vjy - viy) + vix)) {
-                isInside = true;
-            }
-        }
-
-        return isInside;
     }
 
     /**
