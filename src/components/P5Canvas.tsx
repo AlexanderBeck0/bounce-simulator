@@ -42,15 +42,23 @@ export default function P5Canvas(props: P5CanvasProps) {
             balls.forEach(ball => {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
                 // const rightForce: Vector = p5.createVector(0.1 * ball.size, 0);
-                ball.applyForce(gravity); 
+                ball.applyForce(gravity);
                 // ball.applyForce(rightForce); 
                 ball.update();
                 ball.display();
                 const edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
-                // const isInside = boundary.contains(ball.position);
-                // const isInside = boundary.isInside(ball.position, edges);
                 ball.checkEdges(edges);
             });
+            // TODO List: 
+            // - Add collisions between balls
+            // - Make immovable balls (possibly on timer)
+            // - Add a "random" boundary shape
+
+            // - Allow user to change size of boundary/ball
+            // - If boundary is circle, let user change the number of segments
+            // - Allow user to set start drop position
+            // - Allow user to add their own forces?
+            // - Allow user to draw own boundary
         }
 
         /*// Not liking how I'm redefining this locally. Might want to change later...
