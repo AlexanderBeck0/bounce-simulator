@@ -35,10 +35,12 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
+            const drawer = new Drawer(p5);
+
             const boundary = new Boundary(p5, props.shape, props.shapes, 100, p5.createVector(0, 0));
             boundary.createBoundary();
+            const edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
 
-            const drawer = new Drawer(p5);
             balls.forEach(ball => {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
                 // const rightForce: Vector = p5.createVector(0.1 * ball.size, 0);
@@ -46,8 +48,8 @@ export default function P5Canvas(props: P5CanvasProps) {
                 // ball.applyForce(rightForce); 
                 ball.update();
                 ball.display();
-                const edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
                 ball.checkEdges(edges);
+                ball.checkSiblingCollision(balls);
             });
             // TODO List: 
             // - Add collisions between balls

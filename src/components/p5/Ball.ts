@@ -3,7 +3,7 @@ import { Vector } from 'p5';
 import { Shape } from './../../App';
 import Drawer from './Drawer';
 export default class Ball {
-    //#region Variables
+    // #region Variables
     p5: P5CanvasInstance;
     shape: Shape;
     /**
@@ -19,7 +19,7 @@ export default class Ball {
     shapeMap: Map<Shape, () => void>;
     shapes: Shape[];
     drawer: Drawer;
-    //#endregion
+    // #endregion
     /**
      * The constructor for creating a ball. Initializes acceleration and velocity to 0,
      * populates a shape map, and ensures that all the shapes are within the shape map.
@@ -77,7 +77,7 @@ export default class Ball {
         this.shapeMap.get(this.shape)?.();
     }
 
-    //#region Movement
+    // #region Movement
 
     /**
      * Applys a force to the ball. Mutates {@link acceleration}
@@ -159,5 +159,46 @@ export default class Ball {
             }
         }
     }
-    //#endregion
+
+    public checkSiblingCollision(balls: Ball[]) {
+        // Get siblings within a certain radius of this ball (to improve performance)
+        // For now, get all balls (will improve performance later)
+        // https://www.gorillasun.de/blog/an-algorithm-for-particle-systems-with-collisions/
+        for (const ball of balls) {
+            if (this === ball) continue;
+            const distance = this.position.dist(ball.position);
+            const sizeDistance = ball.size + this.size;
+
+            if (distance <= sizeDistance) {
+                const normal = Vector.sub(ball.position, this.position).normalize();
+                const velocity = Vector.sub(ball.velocity, this.velocity);
+                const dot = Vector.dot(velocity, normal);
+                const impulse = this.p5.createVector();
+                Vector.mult(normal, 2 * dot / (ball.size + this.size), impulse);
+
+                const bounce = this.p5.createVector();
+                Vector.mult(normal, sizeDistance - distance, bounce);
+
+                const adjustedVelocity = this.p5.createVector();
+                Vector.div(impulse, this.size, adjustedVelocity);
+
+                const adjustedBallVelocity = this.p5.createVector();
+                Vector.div(impulse, ball.size, adjustedBallVelocity);
+
+                this.velocity.add(adjustedVelocity);
+                ball.velocity.sub(adjustedBallVelocity);
+
+                const adjustedPosition = this.p5.createVector();
+                Vector.div(bounce, this.size, adjustedPosition);
+
+                const adjustedBallPosition = this.p5.createVector();
+                Vector.div(bounce, ball.size, adjustedBallPosition);
+
+                this.position.sub(adjustedPosition);
+                ball.position.add(adjustedBallPosition);
+
+            }
+        }
+    }
+    // #endregion
 }

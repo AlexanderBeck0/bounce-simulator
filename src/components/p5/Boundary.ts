@@ -8,7 +8,7 @@ import Drawer from './Drawer';
             boundary.createBoundary();
  */
 export default class Boundary {
-    //#region Variables
+    // #region Variables
     velocity: Vector;
     acceleration: Vector;
     private p5: P5CanvasInstance;
@@ -34,7 +34,7 @@ export default class Boundary {
      */
     private containsMap: Map<Shape, (point: Vector) => boolean>;
 
-    //#endregion
+    // #endregion
     constructor(p5: P5CanvasInstance, shape: Shape, shapes: Shape[], size?: number, position?: Vector) {
         this.p5 = p5;
         this.shape = shape;
@@ -96,7 +96,7 @@ export default class Boundary {
         this.shapeMap.get(this.shape)!();
     }
 
-    //#region Collisions
+    // #region Collisions
 
     private pointInCircle(point: Vector): boolean {
         /*console.log('point x: ', point.x)
@@ -128,5 +128,5 @@ export default class Boundary {
     public contains(point: Vector): boolean {
         return this.containsMap.get(this.shape)!(point);
     }
-    //#endregion
+    // #endregion
 }
