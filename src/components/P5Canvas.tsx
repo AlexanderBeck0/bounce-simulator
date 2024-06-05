@@ -24,9 +24,6 @@ export default function P5Canvas(props: P5CanvasProps) {
         let boundary: Boundary;
         let edges: Vector[];
         const drawer = new Drawer(p5);
-        let boundary: Boundary;
-        let edges: Vector[];
-        const drawer = new Drawer(p5);
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
             boundary = new Boundary(p5, props.shape, 100, p5.createVector(0, 0));
