@@ -40,6 +40,15 @@ export default class Drawer {
         // this.p5.circle(this.position.x, this.position.y, this.size);
     }
 
+    public drawTriangle(position: Vector, size: number, segments?: number) {
+        const vertices = this.calculateVertices("Triangle", position, size, segments);
+        this.p5.beginShape();
+        for (let i = 0; i < vertices.length; i++) {
+            this.p5.vertex(vertices[i].x, vertices[i].y);
+        }
+        this.p5.endShape(this.p5.CLOSE);
+    }
+
     //#endregion
     //#region Calculating
     /**
@@ -56,6 +65,8 @@ export default class Drawer {
                 return this.calculateSquareVertices(position, size);
             case "Circle":
                 return this.calculateCircleVertices(position, size, segments || 30);
+            case "Triangle":
+                return this.calculateTriangleVertices(position, size);
             default:
                 return [];
         }
@@ -92,6 +103,15 @@ export default class Drawer {
             const vy = position.y + this.p5.sin(angle) * radius;
             vertices.push(this.p5.createVector(vx, vy));
         }
+        return vertices;
+    }
+
+    private calculateTriangleVertices(position: Vector, size: number) {
+        const vertices = [
+            this.p5.createVector(position.x - size, position.y - size), // top-left
+            this.p5.createVector(position.x + size, position.y - size), // top-right
+            this.p5.createVector(position.x, position.y + size)  // bottom-left
+        ];
         return vertices;
     }
     //#endregion

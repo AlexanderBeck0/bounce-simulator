@@ -61,6 +61,7 @@ export default class Boundary {
     private populateShapeMap(): void {
         this.shapeMap.set("Square", () => this.drawer.drawSquare(this.position, this.size));
         this.shapeMap.set("Circle", () => this.drawer.drawCircle(this.position, this.size));
+        this.shapeMap.set("Triangle", () => this.drawer.drawTriangle(this.position, this.size));
     }
 
     /**

@@ -3,7 +3,7 @@ import './App.css';
 import OptionsUI from './components/OptionsUI';
 import P5Canvas from './components/P5Canvas';
 
-const Shapes = ["Square", "Circle"];
+const Shapes = ["Square", "Circle", "Triangle"];
 export type Shape = typeof Shapes[number];
 
 export default function App() {
