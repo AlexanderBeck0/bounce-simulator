@@ -21,10 +21,16 @@ export default function P5Canvas(props: P5CanvasProps) {
     }*/
 
     const sketch: Sketch = p5 => {
+        let boundary: Boundary;
+        let edges: Vector[];
+        const drawer = new Drawer(p5);
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
+            boundary = new Boundary(p5, props.shape, 100, p5.createVector(0, 0));
+            edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
             for (let i = 0; i < props.ballCount; i++) {
-                balls.push(new Ball(p5, props.ballShape, props.shapes, 5, p5.createVector(Math.random() * 100, Math.random() * 100)));
+                const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
+                balls.push(new Ball(p5, props.ballShape, 5, startPosition));
             }
         }
 
@@ -35,11 +41,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
-            const drawer = new Drawer(p5);
-
-            const boundary = new Boundary(p5, props.shape, props.shapes, 100, p5.createVector(0, 0));
             boundary.createBoundary();
-            const edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
 
             balls.forEach(ball => {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
@@ -52,15 +54,19 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.checkSiblingCollision(balls);
             });
             // TODO List: 
-            // - Add collisions between balls
-            // - Make immovable balls (possibly on timer)
-            // - Add a "random" boundary shape
+            // - Add collisions between balls: A
+            // - Make immovable balls (possibly on timer): A
+            // - Add a "random" boundary shape: S
 
-            // - Allow user to change size of boundary/ball
+            // - Allow user to set start drop position: S
+            // - Allow user to add their own forces?: A
+            
+            // Must add
+            // - Allow user to draw own boundary: S (attempt)
+
+            // UI things
+            // - Allow user to change size of boundary/ball: A
             // - If boundary is circle, let user change the number of segments
-            // - Allow user to set start drop position
-            // - Allow user to add their own forces?
-            // - Allow user to draw own boundary
         }
 
         /*// Not liking how I'm redefining this locally. Might want to change later...

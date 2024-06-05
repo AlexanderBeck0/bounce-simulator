@@ -9,12 +9,28 @@ export default class Drawer {
     }
 
     //#region Drawing
+    public draw(shape: Shape, position: Vector, size: number, segments?: number): void {
+        switch(shape) {
+            case "Square":
+                this.drawSquare(position, size);
+                break;
+            case "Circle":
+                this.drawCircle(position, size, segments);
+                break;
+            case "Triangle":
+                this.drawTriangle(position, size);
+                break;
+            default:
+                throw "Unknown shape. Cannot draw.";
+        }
+    }
+
     /**
      * Draws a square by calling {@link calculateVertices this.calculateVertices}
      * @param position The position to draw the square at
      * @param size The size of the square
      */
-    public drawSquare(position: Vector, size: number): void {
+    private drawSquare(position: Vector, size: number): void {
         const squareVertices = this.calculateVertices("Square", position, size);
         this.p5.beginShape();
         for (const v of squareVertices) {
@@ -30,7 +46,7 @@ export default class Drawer {
      * @param size The radius of the circle
      * @param segments The number of segments for the circle. Defaults at 30. Note: The greater this value, the more resource intensive it is.
      */
-    public drawCircle(position: Vector, size: number, segments?: number) {
+    private drawCircle(position: Vector, size: number, segments?: number) {
         const circleVertices = this.calculateVertices("Circle", position, size, segments);
         this.p5.beginShape();
         for (let i = 0; i < circleVertices.length; i++) {
@@ -40,8 +56,8 @@ export default class Drawer {
         // this.p5.circle(this.position.x, this.position.y, this.size);
     }
 
-    public drawTriangle(position: Vector, size: number, segments?: number) {
-        const vertices = this.calculateVertices("Triangle", position, size, segments);
+    private drawTriangle(position: Vector, size: number) {
+        const vertices = this.calculateVertices("Triangle", position, size);
         this.p5.beginShape();
         for (let i = 0; i < vertices.length; i++) {
             this.p5.vertex(vertices[i].x, vertices[i].y);
