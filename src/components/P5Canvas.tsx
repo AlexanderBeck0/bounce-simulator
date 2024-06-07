@@ -1,6 +1,6 @@
 import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
 import { Vector } from "p5";
-import { Shape } from "../App";
+import { Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
 import Drawer from "./p5/Drawer";
@@ -45,10 +45,18 @@ export default function P5Canvas(props: P5CanvasProps) {
             boundary.createBoundary();
 
             balls.forEach(ball => {
-                const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
-                // const rightForce: Vector = p5.createVector(0.1 * ball.size, 0);
+                const gravity: Force = {
+                    name: "Gravity",
+                    value: p5.createVector(0, 0.1 * ball.size),
+                    enabled: true
+                };
+                const rightForce: Force = {
+                    name: "Right Force",
+                    value: p5.createVector(0.1 * ball.size, 0),
+                    enabled: false
+                };
                 ball.applyForce(gravity);
-                // ball.applyForce(rightForce); 
+                ball.applyForce(rightForce); 
                 ball.update();
                 ball.display();
                 ball.checkEdges(edges);
@@ -61,12 +69,12 @@ export default function P5Canvas(props: P5CanvasProps) {
 
             // - Allow user to set start drop position: S
             // - Allow user to add their own forces?: A
-            
+
             // Must add
             // - Allow user to draw own boundary: S (attempt)
 
             // UI things
-            // - Allow user to change size of boundary/ball: A
+            // - DONE: Allow user to change size of boundary/ball: A
             // - If boundary is circle, let user change the number of segments: A
         }
 

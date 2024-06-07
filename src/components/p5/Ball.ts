@@ -1,6 +1,6 @@
 import { P5CanvasInstance } from '@p5-wrapper/react';
 import { Vector } from 'p5';
-import { Shape } from './../../App';
+import { Force, Shape } from './../../App';
 import Drawer from './Drawer';
 export default class Ball {
     // #region Variables
@@ -49,10 +49,12 @@ export default class Ball {
 
     /**
      * Applys a force to the ball. Mutates {@link acceleration}
-     * @param force The force Vector to add to the ball
+     * @param force The force to add to the ball's {@link acceleration}. Only adds when `force.enabled` is `true`
      */
-    public applyForce(force: Vector): void {
-        this.acceleration.add(force);
+    public applyForce(force: Force): void {
+        if (force.enabled) {
+            this.acceleration.add(force.value);
+        }
     }
 
     /**
