@@ -9,7 +9,8 @@ interface P5CanvasProps {
     shape: Shape;
     ballShape: Shape;
     ballCount: number;
-    shapes: Shape[];
+    ballSize: number;
+    boundarySize: number;
 }
 
 export default function P5Canvas(props: P5CanvasProps) {
@@ -26,11 +27,11 @@ export default function P5Canvas(props: P5CanvasProps) {
         const drawer = new Drawer(p5);
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
-            boundary = new Boundary(p5, props.shape, 100, p5.createVector(0, 0));
+            boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
-                balls.push(new Ball(p5, props.ballShape, 5, startPosition));
+                balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
             }
         }
 

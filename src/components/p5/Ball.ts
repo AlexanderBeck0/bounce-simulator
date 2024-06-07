@@ -7,7 +7,7 @@ export default class Ball {
     p5: P5CanvasInstance;
     shape: Shape;
     /**
-     * Defaults to 10
+     * Defaults to 5
      */
     size: number;
     /**
@@ -22,7 +22,7 @@ export default class Ball {
      * The constructor for creating a ball. Initializes acceleration and velocity to 0
      * @param p5 A p5 instance
      * @param shape The shape of the ball
-     * @param size The size of the ball. Defaults to 10.
+     * @param size The size of the ball. Defaults to 5.
      * @param position The start position of the ball. Defaults to the center of the canvas.
      */
     constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector) {
@@ -31,7 +31,7 @@ export default class Ball {
 
         // Start position at center of canvas by default
         this.position = position || this.p5.createVector(p5.width / 2, p5.height / 2);
-        this.size = size || 10;
+        this.size = size || 5;
 
         this.acceleration = this.p5.createVector(0, 0);
         this.velocity = this.p5.createVector(0, 0);

@@ -11,29 +11,29 @@ export default function App() {
 	const [currentShape, setCurrentShape] = useState<Shape>("Square");
 	const [currentBallShape, setCurrentBallShape] = useState<Shape>("Circle");
 	const [currentBallCount, setCurrentBallCount] = useState<number>(0);
-	function changeShape(shape: Shape): void {
-		setCurrentShape(shape);
-	}
-
-	function changeBallShape(shape: Shape): void {
-		setCurrentBallShape(shape);
-	}
-
-	function changeBallCount(newCount: number): void {
-		setCurrentBallCount(newCount);
-	}
+	const [currentBallSize, setCurrentBallSize] = useState<number>(10);
+	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 
 	return (
 		<>
-			<OptionsUI changeShape={changeShape}
-				changeBallShape={changeBallShape}
-				changeBallCount={changeBallCount}
+			<OptionsUI changeShape={setCurrentShape}
+				changeBallShape={setCurrentBallShape}
+				changeBallCount={setCurrentBallCount}
+				changeBallSize={setCurrentBallSize}
+				changeBoundarySize={setCurrentBoundarySize}
 				shapes={Shapes}
 				currentShape={currentShape}
 				currentBallShape={currentBallShape}
 				currentBallCount={currentBallCount}
+				currentBallSize={currentBallSize}
+				currentBoundarySize={currentBoundarySize}
 			/>
-			<P5Canvas shape={currentShape} ballShape={currentBallShape} ballCount={currentBallCount} shapes={Shapes} />
+			<P5Canvas shape={currentShape}
+				ballShape={currentBallShape}
+				ballCount={currentBallCount}
+				ballSize={currentBallSize}
+				boundarySize={currentBoundarySize}
+			/>
 		</>
 	)
 }
