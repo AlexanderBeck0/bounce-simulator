@@ -1,5 +1,6 @@
 import { JSX } from "react/jsx-runtime";
 import { Shape } from "../App";
+import CheckboxList from "./UI/CheckboxList";
 
 interface OptionsUIProps {
     changeShape: (newShape: Shape) => void;
@@ -24,6 +25,11 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
             inputChangeEvent.currentTarget.value = "0";
         }
     }
+
+    function handleCheckboxChange(checked: boolean, index: number): void {
+        console.log(`Checkbox at index ${index} is now ${checked ? 'checked' : 'unchecked'}`);
+    }
+
     return (
         <div className="flex flex-col options">
             <div className="flex w-full items-center mb-4">
@@ -78,6 +84,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                         forceMinimumOfZero(val);
                         props.changeBoundarySize(val.currentTarget.valueAsNumber);
                     }} />
+            </div>
+            <div className="flex w-full items-center space-x-2">
+                <CheckboxList checkboxes={["Gravity", "Left Force"]} onCheckboxChange={handleCheckboxChange} />
             </div>
         </div>
     );

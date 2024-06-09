@@ -1,17 +1,15 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
+
 #root {
   max-width: 90vw;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  place-items: center;
 }
 
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+body {
+  margin: 0;
 }

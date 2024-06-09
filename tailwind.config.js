@@ -4,7 +4,7 @@ import daisyui from 'daisyui';
 export default {
   content: [
     "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx",
+    "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {},
@@ -17,8 +17,7 @@ export default {
     darkTheme: "dim",
     styled: true,
     utils: true,
-    logs: false,
-    themeRoom: ":root"
+    logs: true,
   }
 }
 
