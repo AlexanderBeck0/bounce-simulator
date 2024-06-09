@@ -24,6 +24,7 @@ export default function App() {
 
 	useEffect(() => {
 		localStorage.setItem('isDarkMode', JSON.stringify(isDarkMode));
+		document.querySelector("html")?.setAttribute('data-theme', isDarkMode ? 'dim' : 'light');
 	}, [isDarkMode]);
 
 
@@ -43,7 +44,8 @@ export default function App() {
 				currentBoundarySize={currentBoundarySize}
 				isDarkMode={isDarkMode}
 			/>
-			<P5Canvas shape={currentShape}
+			<P5Canvas
+				shape={currentShape}
 				ballShape={currentBallShape}
 				ballCount={currentBallCount}
 				ballSize={currentBallSize}

@@ -56,7 +56,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                     enabled: false
                 };
                 ball.applyForce(gravity);
-                ball.applyForce(rightForce); 
+                ball.applyForce(rightForce);
                 ball.update();
                 ball.display();
                 ball.checkEdges(edges);
