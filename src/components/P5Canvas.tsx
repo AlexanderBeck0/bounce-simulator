@@ -1,12 +1,12 @@
 import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
 import { Vector } from "p5";
-import { Shape } from "../App";
+import {BoundaryShape, Shape} from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
 import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
-    shape: Shape;
+    shape: BoundaryShape;
     ballShape: Shape;
     ballCount: number;
     shapes: Shape[];
@@ -28,10 +28,12 @@ export default function P5Canvas(props: P5CanvasProps) {
             p5.createCanvas(600, 400, p5.WEBGL);
             boundary = new Boundary(p5, props.shape, 100, p5.createVector(0, 0));
             edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
+
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
                 balls.push(new Ball(p5, props.ballShape, 5, startPosition));
             }
+
         }
 
         p5.draw = () => {
@@ -47,20 +49,22 @@ export default function P5Canvas(props: P5CanvasProps) {
                 const gravity: Vector = p5.createVector(0, 0.1 * ball.size);
                 // const rightForce: Vector = p5.createVector(0.1 * ball.size, 0);
                 ball.applyForce(gravity);
-                // ball.applyForce(rightForce); 
+                // ball.applyForce(rightForce);
                 ball.update();
                 ball.display();
                 ball.checkEdges(edges);
                 ball.checkSiblingCollision(balls);
             });
-            // TODO List: 
+
+
+            // TODO List:
             // - Add collisions between balls: A
             // - Make immovable balls (possibly on timer): A
             // - Add a "random" boundary shape: S
 
             // - Allow user to set start drop position: S
             // - Allow user to add their own forces?: A
-            
+
             // Must add
             // - Allow user to draw own boundary: S (attempt)
 

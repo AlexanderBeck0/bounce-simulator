@@ -4,7 +4,9 @@ import OptionsUI from './components/OptionsUI';
 import P5Canvas from './components/P5Canvas';
 
 const Shapes = ["Square", "Circle", "Triangle"];
+const BoundaryShapes = ["Square", "Circle", "Triangle", "Random"]
 export type Shape = typeof Shapes[number];
+export type BoundaryShape = typeof BoundaryShapes[number];
 
 export default function App() {
 
@@ -29,6 +31,7 @@ export default function App() {
 				changeBallShape={changeBallShape}
 				changeBallCount={changeBallCount}
 				shapes={Shapes}
+				boundaryShapes={BoundaryShapes}
 				currentShape={currentShape}
 				currentBallShape={currentBallShape}
 				currentBallCount={currentBallCount}
