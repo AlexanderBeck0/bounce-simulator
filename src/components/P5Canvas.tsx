@@ -7,19 +7,19 @@ import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
     shape: Shape;
+    segments: number;
     ballShape: Shape;
     ballCount: number;
     ballSize: number;
     boundarySize: number;
+
+    // Additional props
+    className?: string;
 }
 
 export default function P5Canvas(props: P5CanvasProps) {
     // const [rotation, setRotation] = useState(0);
     const balls: Ball[] = [];
-
-    /*type sketchProps = SketchProps & {
-        rotation: number;
-    }*/
 
     const sketch: Sketch = p5 => {
         let boundary: Boundary;
@@ -28,7 +28,7 @@ export default function P5Canvas(props: P5CanvasProps) {
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
             boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
-            edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, 30);
+            edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
                 balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
@@ -42,7 +42,10 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
-            boundary.createBoundary();
+            if (props.shape === "Circle" && props.segments) {
+                edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
+            }
+            boundary.createBoundary(props.segments);
 
             balls.forEach(ball => {
                 const gravity: Force = {
@@ -78,12 +81,8 @@ export default function P5Canvas(props: P5CanvasProps) {
             // - If boundary is circle, let user change the number of segments: A
         }
 
-        /*// Not liking how I'm redefining this locally. Might want to change later...
-        p5.updateWithProps = (props: { rotation: number }) => {
-            if (props.rotation) {
-                setRotation((props.rotation * Math.PI) / 180);
-            }
-        };*/
+        //p5.updateWithProps = props => {
+        //};
     }
 
     /*useEffect(() => {
@@ -95,5 +94,9 @@ export default function P5Canvas(props: P5CanvasProps) {
         };
     }, []);*/
 
-    return <ReactP5Wrapper sketch={sketch} /*rotation={rotation}*/ />;
+    return (
+        <div className={props.className}>
+            <ReactP5Wrapper sketch={sketch} /*rotation={rotation}*/ />
+        </div>
+    );
 }

@@ -19,30 +19,38 @@ export default function App() {
 	const [currentBallCount, setCurrentBallCount] = useState<number>(0);
 	const [currentBallSize, setCurrentBallSize] = useState<number>(10);
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
+	const [segments, setSegments] = useState<number>(30);
 	// const [forces, setForces] = useState<Force[]>([]);
 
 
 	return (
-		<>
-			<OptionsUI changeShape={setCurrentShape}
-				changeBallShape={setCurrentBallShape}
-				changeBallCount={setCurrentBallCount}
-				changeBallSize={setCurrentBallSize}
-				changeBoundarySize={setCurrentBoundarySize}
-				shapes={Shapes}
-				currentShape={currentShape}
-				currentBallShape={currentBallShape}
-				currentBallCount={currentBallCount}
-				currentBallSize={currentBallSize}
-				currentBoundarySize={currentBoundarySize}
-			/>
-			<P5Canvas
-				shape={currentShape}
-				ballShape={currentBallShape}
-				ballCount={currentBallCount}
-				ballSize={currentBallSize}
-				boundarySize={currentBoundarySize}
-			/>
-		</>
+		<div className="flex-col">
+			<div>
+				<OptionsUI changeShape={setCurrentShape}
+					changeBallShape={setCurrentBallShape}
+					changeBallCount={setCurrentBallCount}
+					changeBallSize={setCurrentBallSize}
+					changeBoundarySize={setCurrentBoundarySize}
+					changeSegments={setSegments}
+					shapes={Shapes}
+					currentShape={currentShape}
+					currentBallShape={currentBallShape}
+					currentBallCount={currentBallCount}
+					currentBallSize={currentBallSize}
+					currentBoundarySize={currentBoundarySize}
+					segments={segments}
+				/>
+			</div>
+			<div className="mt-2 flex items-center justify-center">
+				<P5Canvas
+					shape={currentShape}
+					segments={segments}
+					ballShape={currentBallShape}
+					ballCount={currentBallCount}
+					ballSize={currentBallSize}
+					boundarySize={currentBoundarySize}
+				/>
+			</div>
+		</div>
 	)
 }

@@ -8,12 +8,17 @@ interface OptionsUIProps {
     changeBallCount: (newCount: number) => void;
     changeBallSize: (newSize: number) => void;
     changeBoundarySize: (newSize: number) => void;
+    changeSegments: (newCount: number) => void;
     shapes: Shape[];
     currentShape?: Shape;
     currentBallShape?: Shape;
     currentBallCount?: number;
     currentBallSize?: number;
     currentBoundarySize?: number;
+    segments?: number;
+
+    // Additional props
+    className?: string;
 }
 export default function OptionsUI(props: OptionsUIProps): JSX.Element {
 
@@ -30,17 +35,13 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         console.log(`Checkbox at index ${index} is now ${checked ? 'checked' : 'unchecked'}`);
     }
 
-    /**
-     * TODO: ###############
-     * Properly set up themes
-     */
     // TODO: Disable autofill
     return (
-        <div>
-            <div className="flex flex-col">
+        <div className={props.className}>
+            <div className="flex flex-col max-w-2xl">
                 <div className="flex flex-nowrap items-center mb-4">
-                    <div className="flex space-x-2 basis-5/6">
-                        <div className="flex flex-col flex-1 basis-1/3">
+                    <div className="flex space-x-2">
+                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
                             <div className="label">
                                 <span className="label-text">Boundary Shape</span>
                             </div>
@@ -53,7 +54,19 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 })}
                             </select>
                         </div>
-                        <div className="flex flex-col flex-1 basis-1/3">
+                        <div className={`flex flex-col flex-initial basis-1/5 ${props.currentShape === "Circle" ? "visible" : "hidden"}`}>
+                            <div className="label">
+                                <span className="label-text">Segments</span>
+                            </div>
+                            <input type="number" placeholder="Segments"
+                                className="input input-bordered w-full"
+                                value={props.segments} min={2} max={1000}
+                                onChange={(val) => {
+                                    forceMinimumOfZero(val);
+                                    props.changeSegments(val.currentTarget.valueAsNumber);
+                                }} />
+                        </div>
+                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
                             <div className="label">
                                 <span className="label-text">Ball Shape</span>
                             </div>
@@ -67,7 +80,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 })}
                             </select>
                         </div>
-                        <div className="flex flex-col flex-1 basis-1/3">
+                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
                             <div className="label">
                                 <span className="label-text">Number of balls</span>
                             </div>
@@ -80,9 +93,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 }} />
                         </div>
                     </div>
-                    <div className="flex flex-col flex-initial basis-1/6 max-w-fit">
-                        {/* Put a small button here */}
-                    </div>
+
                 </div>
                 <div className="flex w-full items-center space-x-2">
                     <input type="number" placeholder="Size of balls"
