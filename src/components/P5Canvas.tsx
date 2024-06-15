@@ -6,12 +6,14 @@ import Boundary from "./p5/Boundary";
 import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
+    // changeForces: (newForces: Force[]) => void;
     shape: Shape;
     segments: number;
     ballShape: Shape;
     ballCount: number;
     ballSize: number;
     boundarySize: number;
+    // forces: Force[];
 
     // Additional props
     className?: string;
@@ -25,6 +27,24 @@ export default function P5Canvas(props: P5CanvasProps) {
         let boundary: Boundary;
         let edges: Vector[];
         const drawer = new Drawer(p5);
+        const forces: Force[] = [
+            {
+                name: "Gravity",
+                value: (size: number) => p5.createVector(0, 0.1 * size),
+                enabled: true
+            },
+            {
+                name: "Right Force",
+                value: (size: number) => p5.createVector(0.1 * size, 0),
+                enabled: false
+            },
+            {
+                name: "Left Force",
+                value: (size: number) => p5.createVector(-0.1 * size, 0),
+                enabled: false
+            },
+        ];
+
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
             boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
@@ -32,6 +52,20 @@ export default function P5Canvas(props: P5CanvasProps) {
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
                 balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
+            }
+        }
+
+        function enableForce(forceName: string): void {
+            const foundForces: Force[] = forces.filter(force => force.name === forceName);
+            if (foundForces.length > 0) {
+                foundForces[0].enabled = true;
+            }
+        }
+
+        function disableForce(forceName: string): void {
+            const foundForces: Force[] = forces.filter(force => force.name === forceName);
+            if (foundForces.length > 0) {
+                foundForces[0].enabled = false;
             }
         }
 
@@ -48,18 +82,8 @@ export default function P5Canvas(props: P5CanvasProps) {
             boundary.createBoundary(props.segments);
 
             balls.forEach(ball => {
-                const gravity: Force = {
-                    name: "Gravity",
-                    value: p5.createVector(0, 0.1 * ball.size),
-                    enabled: true
-                };
-                const rightForce: Force = {
-                    name: "Right Force",
-                    value: p5.createVector(0.1 * ball.size, 0),
-                    enabled: false
-                };
-                ball.applyForce(gravity);
-                ball.applyForce(rightForce);
+                ball.applyForces(forces);
+                // forces.forEach(ball.applyForce);
                 ball.update();
                 ball.display();
                 ball.checkEdges(edges);

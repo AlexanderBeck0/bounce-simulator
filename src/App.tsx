@@ -9,7 +9,7 @@ export type Shape = typeof Shapes[number];
 
 export type Force = {
 	name: string;
-	value: Vector;
+	value: Vector | ((size: number) => Vector);
 	enabled: boolean;
 }
 
@@ -43,12 +43,14 @@ export default function App() {
 			</div>
 			<div className="mt-2 flex items-center justify-center">
 				<P5Canvas
+					// changeForces={setForces}
 					shape={currentShape}
 					segments={segments}
 					ballShape={currentBallShape}
 					ballCount={currentBallCount}
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
+					// forces={forces}
 				/>
 			</div>
 		</div>

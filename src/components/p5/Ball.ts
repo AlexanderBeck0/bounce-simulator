@@ -53,8 +53,17 @@ export default class Ball {
      */
     public applyForce(force: Force): void {
         if (force.enabled) {
-            this.acceleration.add(force.value);
+            const forceValue: Vector = typeof force.value === "function" ? force.value(this.size) : force.value;
+            this.acceleration.add(forceValue);
         }
+    }
+
+    /**
+     * Applies all the forces in `forces` to the ball. Mutates {@link acceleration}
+     * @param forces The forces to add to the ball's {@link acceleration}. Only adds the ones where `force.enabled` is `true`
+     */
+    public applyForces(forces: Force[]): void {
+        forces.filter(force => force.enabled).forEach(this.applyForce.bind(this));
     }
 
     /**
