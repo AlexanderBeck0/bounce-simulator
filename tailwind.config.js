@@ -13,11 +13,10 @@ export default {
     daisyui
   ],
   daisyui: {
-    themes: ["light", "dim"],
-    darkTheme: "dim",
+    themes: ["light"],
     styled: true,
     utils: true,
-    logs: true,
+    logs: false,
   }
 }
 
