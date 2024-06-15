@@ -44,7 +44,7 @@ export default class Boundary {
         this.p5.stroke(0);
         this.p5.strokeWeight(3);
 
-        if (this.shape === "Random" && this.vertices.length ===0){
+        if (this.shape === "Random" && this.vertices.length === 0){
             this.vertices = this.drawer.calculateRandomShapeVertices(this.size)
         }
         this.drawer.draw(this.shape, this.position, this.size, 30, this.vertices);

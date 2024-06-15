@@ -154,7 +154,7 @@ export default class Drawer {
         return vertices;
     }
 
-    private calculateRandomShapeVertices(size: number) {
+    public calculateRandomShapeVertices(size: number) {
         const vertices: Vector[] = []
         const verticesCount = Math.floor(Math.random() * 10 + 3)
         for (let i = 0; i < verticesCount; i++) {

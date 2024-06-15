@@ -56,6 +56,13 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.checkSiblingCollision(balls);
             });
 
+            p5.mouseClicked = () => {
+                if (p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
+                    const x = p5.mouseX - p5.width / 2
+                    const y = p5.mouseY - p5.height /2
+                    balls.push(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
+                }
+            }
 
             // TODO List:
             // - Add collisions between balls: A
@@ -73,6 +80,8 @@ export default function P5Canvas(props: P5CanvasProps) {
             // - If boundary is circle, let user change the number of segments: A
         }
 
+
+
         /*// Not liking how I'm redefining this locally. Might want to change later...
         p5.updateWithProps = (props: { rotation: number }) => {
             if (props.rotation) {
@@ -80,6 +89,7 @@ export default function P5Canvas(props: P5CanvasProps) {
             }
         };*/
     }
+
 
     /*useEffect(() => {
         const interval = setInterval(() => {

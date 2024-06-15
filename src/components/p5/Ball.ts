@@ -141,6 +141,7 @@ export default class Ball {
                 const normal = Vector.sub(ball.position, this.position).normalize();
                 const velocity = Vector.sub(ball.velocity, this.velocity);
                 const dot = Vector.dot(velocity, normal);
+
                 const impulse = this.p5.createVector();
                 Vector.mult(normal, 2 * dot / (ball.size + this.size), impulse);
 
