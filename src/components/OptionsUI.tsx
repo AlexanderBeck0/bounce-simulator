@@ -39,8 +39,8 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
     return (
         <div className={props.className}>
             <div className="flex flex-col max-w-2xl">
-                <div className="flex flex-nowrap items-center mb-4">
-                    <div className="flex space-x-2">
+                <div className="flex flex-nowrap items-center mb-1">
+                    <div className="flex space-x-1">
                         <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
                             <div className="label">
                                 <span className="label-text">Boundary Shape</span>
@@ -93,24 +93,34 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 }} />
                         </div>
                     </div>
-
                 </div>
-                <div className="flex w-full items-center space-x-2">
-                    <input type="number" placeholder="Size of balls"
-                        className="input input-bordered flex-initial w-1/2"
-                        value={props.currentBallSize} min={0}
-                        onChange={(val) => {
-                            forceMinimumOfZero(val);
-                            props.changeBallSize(val.currentTarget.valueAsNumber)
-                        }} />
-                    <input type="number" placeholder="Size of boundary"
-                        className="input input-bordered flex-initial w-1/2"
-                        value={props.currentBoundarySize} min={0}
-                        onChange={(val) => {
-                            // Enforce the minimum being 0
-                            forceMinimumOfZero(val);
-                            props.changeBoundarySize(val.currentTarget.valueAsNumber);
-                        }} />
+                <div className="flex flex-row flex-nowrap space-x-1">
+                    <div className="flex flex-col w-1/2">
+                        <div className="label">
+                            <span className="label-text">Size of Boundary</span>
+                        </div>
+                        <input type="number" placeholder="Size of boundary"
+                            className="input input-bordered"
+                            value={props.currentBoundarySize} min={0}
+                            onChange={(val) => {
+                                // Enforce the minimum being 0
+                                forceMinimumOfZero(val);
+                                props.changeBoundarySize(val.currentTarget.valueAsNumber);
+                            }} />
+                    </div>
+                    <div className="flex flex-col w-1/2">
+                        <div className="label">
+                            <span className="label-text">Size of balls</span>
+                        </div>
+                        <input type="number" placeholder="Size of balls"
+                            className="input input-bordered"
+                            value={props.currentBallSize} min={0}
+                            onChange={(val) => {
+                                forceMinimumOfZero(val);
+                                props.changeBallSize(val.currentTarget.valueAsNumber)
+                            }} />
+                    </div>
+
                 </div>
                 <div className="flex-initial flex-nowrap">
                     <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={["Gravity"]} onCheckboxChange={handleCheckboxChange} />

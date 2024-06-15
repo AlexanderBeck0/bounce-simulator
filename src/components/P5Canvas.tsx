@@ -78,7 +78,7 @@ export default function P5Canvas(props: P5CanvasProps) {
 
             // UI things
             // - DONE: Allow user to change size of boundary/ball: A
-            // - If boundary is circle, let user change the number of segments: A
+            // - DONE: If boundary is circle, let user change the number of segments: A
         }
 
         //p5.updateWithProps = props => {
