@@ -14,6 +14,7 @@ export default class Boundary {
     private p5: P5CanvasInstance;
     public shape: Shape;
     private drawer: Drawer;
+    private vertices: Vector[] = []
     /**
      * @default 100
      * The size of the boundary.
@@ -43,7 +44,10 @@ export default class Boundary {
         this.p5.stroke(0);
         this.p5.strokeWeight(3);
 
-        this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined);
+        if (this.shape === "Random" && this.vertices.length === 0) {
+            this.vertices = this.drawer.calculateRandomShapeVertices(this.size)
+        }
+        this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined, this.vertices);
     }
     // #endregion
 }

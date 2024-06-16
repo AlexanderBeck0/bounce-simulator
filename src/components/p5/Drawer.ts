@@ -9,8 +9,8 @@ export default class Drawer {
     }
 
     //#region Drawing
-    public draw(shape: Shape, position: Vector, size: number, segments?: number): void {
-        switch(shape) {
+    public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): void {
+        switch (shape) {
             case "Square":
                 this.drawSquare(position, size);
                 break;
@@ -19,6 +19,18 @@ export default class Drawer {
                 break;
             case "Triangle":
                 this.drawTriangle(position, size);
+                break;
+            case "Random":
+                if (vertices) {
+                    this.p5.beginShape()
+                    for (const v of vertices) {
+                        this.p5.vertex(v.x, v.y)
+                    }
+                    this.p5.endShape(this.p5.CLOSE)
+                }
+                else {
+                    this.drawRandomShape(position, size);
+                }
                 break;
             default:
                 throw "Unknown shape. Cannot draw.";
@@ -65,6 +77,15 @@ export default class Drawer {
         this.p5.endShape(this.p5.CLOSE);
     }
 
+    private drawRandomShape(position: Vector, size: number) {
+        const randomVertices = this.calculateVertices("Random", position, size)
+        this.p5.beginShape()
+        randomVertices.forEach(v => {
+            this.p5.vertex(v.x, v.y)
+        })
+        this.p5.endShape(this.p5.CLOSE)
+    }
+
     //#endregion
     //#region Calculating
     /**
@@ -83,6 +104,8 @@ export default class Drawer {
                 return this.calculateCircleVertices(position, size, segments || 30);
             case "Triangle":
                 return this.calculateTriangleVertices(position, size);
+            case "Random":
+                return this.calculateRandomShapeVertices(size)
             default:
                 return [];
         }
@@ -115,7 +138,7 @@ export default class Drawer {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
             const angle = this.p5.map(i, 0, segments, 0, this.p5.TWO_PI);
-            const vx = position.x + this.p5.cos(angle) * radius ;
+            const vx = position.x + this.p5.cos(angle) * radius;
             const vy = position.y + this.p5.sin(angle) * radius;
             vertices.push(this.p5.createVector(vx, vy));
         }
@@ -130,5 +153,23 @@ export default class Drawer {
         ];
         return vertices;
     }
+
+    public calculateRandomShapeVertices(size: number) {
+        const vertices: Vector[] = []
+        const verticesCount = Math.floor(Math.random() * 10 + 3)
+        for (let i = 0; i < verticesCount; i++) {
+            const angle = i * this.p5.TWO_PI / verticesCount
+            let x = size * this.p5.cos(angle)
+            let y = size * this.p5.sin(angle)
+
+            const noiseAmount = 50
+            x += Math.random() * noiseAmount * 2 - noiseAmount
+            y += Math.random() * noiseAmount * 2 - noiseAmount
+
+            vertices.push(this.p5.createVector(x, y))
+        }
+        return vertices
+    }
+
     //#endregion
 }

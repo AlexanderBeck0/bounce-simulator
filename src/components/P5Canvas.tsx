@@ -1,13 +1,13 @@
 import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
 import { Vector } from "p5";
-import { Force, Shape } from "../App";
+import { BoundaryShape, Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
 import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
     // changeForces: (newForces: Force[]) => void;
-    shape: Shape;
+    shape: BoundaryShape;
     segments: number;
     ballShape: Shape;
     ballCount: number;
@@ -49,6 +49,7 @@ export default function P5Canvas(props: P5CanvasProps) {
             p5.createCanvas(600, 400, p5.WEBGL);
             boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
+
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
                 balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
@@ -67,6 +68,7 @@ export default function P5Canvas(props: P5CanvasProps) {
             if (foundForces.length > 0) {
                 foundForces[0].enabled = false;
             }
+
         }
 
         p5.draw = () => {
@@ -89,13 +91,23 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.checkEdges(edges);
                 ball.checkSiblingCollision(balls);
             });
-            // TODO List: 
+
+            p5.mouseClicked = () => {
+                if (p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
+                    const x = p5.mouseX - p5.width / 2
+                    const y = p5.mouseY - p5.height / 2
+                    balls.push(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
+                }
+            }
+
+            // TODO List:
             // - Add collisions between balls: A
             // - Make immovable balls (possibly on timer): A
-            // - Add a "random" boundary shape: S
+            // - DONE: Add a "random" boundary shape: S
 
-            // - Allow user to set start drop position: S
+            // - DONE: Allow user to set start drop position: S
             // - Allow user to add their own forces?: A
+
 
             // Must add
             // - Allow user to draw own boundary: S (attempt)
@@ -105,9 +117,12 @@ export default function P5Canvas(props: P5CanvasProps) {
             // - DONE: If boundary is circle, let user change the number of segments: A
         }
 
+
+
         //p5.updateWithProps = props => {
         //};
     }
+
 
     /*useEffect(() => {
         const interval = setInterval(() => {

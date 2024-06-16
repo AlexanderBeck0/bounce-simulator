@@ -1,16 +1,17 @@
 import { JSX } from "react/jsx-runtime";
-import { Shape } from "../App";
+import { BoundaryShape, Shape } from "../App";
 import CheckboxList from "./UI/CheckboxList";
 
 interface OptionsUIProps {
-    changeShape: (newShape: Shape) => void;
+    changeShape: (newShape: BoundaryShape) => void;
     changeBallShape: (newShape: Shape) => void;
     changeBallCount: (newCount: number) => void;
     changeBallSize: (newSize: number) => void;
     changeBoundarySize: (newSize: number) => void;
     changeSegments: (newCount: number) => void;
     shapes: Shape[];
-    currentShape?: Shape;
+    boundaryShapes: BoundaryShape[]
+    currentShape?: BoundaryShape;
     currentBallShape?: Shape;
     currentBallCount?: number;
     currentBallSize?: number;
@@ -46,10 +47,10 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 <span className="label-text">Boundary Shape</span>
                             </div>
                             <select className="select select-bordered"
-                                onChange={(val) => props.changeShape(val.currentTarget.value)}
+                                onChange={(val) => props.changeShape(val.currentTarget.value as BoundaryShape)}
                                 value={props.currentShape}>
                                 <option disabled>Boundary Shape</option>
-                                {props.shapes.map((shape, index) => {
+                                {props.boundaryShapes.map((shape, index) => {
                                     return <option key={index} value={shape as Shape}>{shape}</option>
                                 })}
                             </select>
@@ -72,7 +73,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                             </div>
                             <select
                                 className="select select-bordered"
-                                onChange={(val) => props.changeBallShape(val.currentTarget.value)}
+                                onChange={(val) => props.changeBallShape(val.currentTarget.value as Shape)}
                                 value={props.currentBallShape}>
                                 <option disabled>Ball Shape</option>
                                 {props.shapes.map((shape, index) => {
