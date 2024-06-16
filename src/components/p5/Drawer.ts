@@ -9,17 +9,14 @@ export default class Drawer {
     }
 
     //#region Drawing
-    public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): void {
+    public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): Vector[] | undefined {
         switch (shape) {
             case "Square":
-                this.drawSquare(position, size);
-                break;
+                return this.drawSquare(position, size);
             case "Circle":
-                this.drawCircle(position, size, segments);
-                break;
+                return this.drawCircle(position, size, segments);
             case "Triangle":
-                this.drawTriangle(position, size);
-                break;
+                return this.drawTriangle(position, size);
             case "Random":
                 if (vertices) {
                     this.p5.beginShape()
@@ -27,11 +24,11 @@ export default class Drawer {
                         this.p5.vertex(v.x, v.y)
                     }
                     this.p5.endShape(this.p5.CLOSE)
+                    return vertices;
                 }
                 else {
-                    this.drawRandomShape(position, size);
+                    return this.drawRandomShape(position, size);
                 }
-                break;
             default:
                 throw "Unknown shape. Cannot draw.";
         }
@@ -42,15 +39,14 @@ export default class Drawer {
      * @param position The position to draw the square at
      * @param size The size of the square
      */
-    private drawSquare(position: Vector, size: number): void {
+    private drawSquare(position: Vector, size: number): Vector[] {
         const squareVertices = this.calculateVertices("Square", position, size);
         this.p5.beginShape();
         for (const v of squareVertices) {
             this.p5.vertex(v.x, v.y);
         }
         this.p5.endShape(this.p5.CLOSE);
-        // this.p5.rectMode(this.p5.CENTER);
-        // return this.p5.square(this.position.x, this.position.y, this.size);
+        return squareVertices;
     }
 
     /**
@@ -58,32 +54,34 @@ export default class Drawer {
      * @param size The radius of the circle
      * @param segments The number of segments for the circle. Defaults at 30. Note: The greater this value, the more resource intensive it is.
      */
-    private drawCircle(position: Vector, size: number, segments?: number) {
+    private drawCircle(position: Vector, size: number, segments?: number): Vector[] {
         const circleVertices = this.calculateVertices("Circle", position, size, segments);
         this.p5.beginShape();
         for (let i = 0; i < circleVertices.length; i++) {
             this.p5.vertex(circleVertices[i].x, circleVertices[i].y);
         }
         this.p5.endShape(this.p5.CLOSE);
-        // this.p5.circle(this.position.x, this.position.y, this.size);
+        return circleVertices;
     }
 
-    private drawTriangle(position: Vector, size: number) {
+    private drawTriangle(position: Vector, size: number): Vector[] {
         const vertices = this.calculateVertices("Triangle", position, size);
         this.p5.beginShape();
         for (let i = 0; i < vertices.length; i++) {
             this.p5.vertex(vertices[i].x, vertices[i].y);
         }
         this.p5.endShape(this.p5.CLOSE);
+        return vertices;
     }
 
-    private drawRandomShape(position: Vector, size: number) {
+    private drawRandomShape(position: Vector, size: number): Vector[] {
         const randomVertices = this.calculateVertices("Random", position, size)
         this.p5.beginShape()
         randomVertices.forEach(v => {
             this.p5.vertex(v.x, v.y)
         })
         this.p5.endShape(this.p5.CLOSE)
+        return randomVertices;
     }
 
     //#endregion

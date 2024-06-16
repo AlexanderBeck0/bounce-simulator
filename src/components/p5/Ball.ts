@@ -69,74 +69,79 @@ export default class Ball {
     /**
      * Updates the ball's {@link velocity}, {@link position}, and sets its {@link acceleration} to 0
      */
-    public update(): void {
+    public update(edges: Vector[]): void {
         this.velocity.add(this.acceleration);
-        this.position.add(this.velocity);
+        // Use steps instead of checking their positions directly to remove the change that a fast enough ball goes flying through the boundary
+        const steps = Math.ceil(this.velocity.mag());
+        const step = this.p5.createVector();
+        if (this.velocity.x === 0) this.velocity.add(0.01);
+        if (this.velocity.y === 0) this.velocity.add(0.01)
+        Vector.div(this.velocity, steps, step);
+
+        for (let i = 0; i < steps; i++) {
+            const nextPos = Vector.add(this.position, step);
+            const collision = this.collides(nextPos, edges);
+            if (collision) {
+                const normal = collision.normal;
+                this.velocity.reflect(normal);
+                break;
+            } else {
+                this.position.add(step);
+            }
+        }
         this.acceleration.mult(0);
     }
 
-    /**
-     * @param point The position Vector of the point
-     * @param vertices An array of Vectors representing the vertices of a boundary
-     * @returns True if the point is in the shape
-     * @throws "Invalid Shape" if there are 3 or less vertices
-     */
-    public isPointInShape(point: Vector, vertices: Vector[]): boolean {
-        if (vertices.length < 3) {
-            throw "Invalid Shape";
-        }
-
-        let isInside = false;
-
+    public collides(nextPosition: Vector, vertices: Vector[]): { collided: boolean, normal: Vector } | null {
         let j = vertices.length - 1;
         for (let i = 0; i < vertices.length; j = i++) {
-            const vi = vertices[i];
-            const vj = vertices[j];
-            if ((vi.y > point.y) !== (vj.y > point.y) &&
-                (point.x < (vj.x - vi.x) * (point.y - vi.y) / (vj.y - vi.y) + vi.x)) {
-                isInside = !isInside;
+            const collision = this.edgeIntersectsPoint(vertices[i], vertices[j], nextPosition, this.size);
+            if (collision) {
+                const edge = Vector.sub(vertices[j], vertices[i]);
+                const normal = this.p5.createVector(-edge.y, edge.x).normalize();
+                return { collided: true, normal: normal };
             }
         }
-
-        return isInside;
+        return null;
     }
 
-    /**
-     * Checks if {@link position} is within {@link edges}. If it bounces on the boundary, it will be bounced with no energy loss
-     * @param edges The edges of the Boundary
-     */
-    public checkEdges(edges: Vector[]): void {
-        for (let i = 0; i < edges.length; i++) {
-            const start = edges[i];
-            const end = edges[(i + 1) % edges.length];
-            const edge = Vector.sub(end, start);
-            const normal = edge.cross(this.p5.createVector(0, 0, 1)).normalize().mult(-1);
-            const ballToStart = Vector.sub(this.position, start);
-            const projection = Vector.dot(ballToStart, normal);
+    public edgeIntersectsPoint(edgeStart: Vector, edgeEnd: Vector, point: Vector, radius: number): boolean {
+        const line = Vector.sub(edgeEnd, edgeStart);
+        // Vector from edgeStart to point
+        const vectorToPoint = Vector.sub(point, edgeStart);
+        const endMinusStartMagSquared = line.magSq();
 
-            if (Math.abs(projection) < this.size) {
-                // Correct position and reflect velocity
-                const distance = Vector.dot(ballToStart, edge) / edge.mag();
-                const closestPoint = Vector.add(start, edge.copy().setMag(distance));
-                const distanceToClosestPoint = Vector.sub(this.position, closestPoint).mag();
-
-                if (distanceToClosestPoint < this.size) {
-                    // Adjust position to the closest point
-                    const adjustment = this.p5.createVector();
-                    Vector.mult(normal, this.size - distanceToClosestPoint, adjustment);
-                    this.position.add(adjustment);
-
-                    // Reflect velocity
-                    const dotProduct = this.velocity.dot(normal);
-                    const newVelocity = this.p5.createVector();
-                    Vector.mult(normal, 2 * dotProduct, newVelocity);
-                    this.velocity.sub(newVelocity);
-
-                    // Add a small offset to prevent sticking
-                    this.position.add(normal.mult(0.1));
-                }
-            }
+        // Prevent division by 0
+        if (endMinusStartMagSquared === 0) {
+            const distance = Vector.dist(point, edgeStart);
+            return distance <= radius;
         }
+
+        const dotProduct = vectorToPoint.dot(line);
+        let projection = dotProduct / endMinusStartMagSquared;
+
+        // Clamp projection to be on the edge
+        projection = this.p5.constrain(projection, 0, 1);
+
+        const closest = this.p5.createVector();
+        Vector.mult(line, projection, closest);
+        const closestToPoint = Vector.add(edgeStart, closest);
+        const distance = Vector.dist(point, closestToPoint);
+
+        // DEBUGGING
+        if (distance > radius) {
+            this.p5.stroke(255, 0, 0);
+            this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
+            this.p5.stroke(255, 0, 0);
+            this.p5.line(edgeStart.x, edgeStart.y, edgeEnd.x, edgeEnd.y);
+
+        } else if (distance <= radius) {
+            this.p5.stroke(0, 255, 0);
+            this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
+        }
+        // END DEBUGGING
+
+        return distance <= radius;
     }
 
     public checkSiblingCollision(balls: Ball[]) {

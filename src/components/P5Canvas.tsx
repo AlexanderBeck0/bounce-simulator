@@ -78,18 +78,21 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
-            if (props.shape === "Circle" && props.segments) {
-                edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
-            }
-            boundary.createBoundary(props.segments);
+            // if (props.shape === "Circle" && props.segments) {
+            //     edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
+            // }
+            edges = boundary.createBoundary(props.segments) || edges;
 
-            balls.forEach(ball => {
+            balls.forEach((ball, index) => {
                 ball.applyForces(forces);
-                // forces.forEach(ball.applyForce);
-                ball.update();
+                ball.update(edges);
                 ball.display();
-                ball.checkEdges(edges);
+                // ball.checkEdges(edges);
                 ball.checkSiblingCollision(balls);
+
+                // Remove any balls that go off screen
+                if (ball.position.x + ball.size > 600 || ball.position.x + ball.size < -600) balls.splice(index, 1);
+                if (ball.position.y + ball.size > 400 || ball.position.y + ball.size < -400) balls.splice(index, 1);
             });
 
             p5.mouseClicked = () => {
@@ -102,6 +105,7 @@ export default function P5Canvas(props: P5CanvasProps) {
 
             // TODO List:
             // - Add collisions between balls: A
+            //  - Make it so collisions do not force other balls out
             // - Make immovable balls (possibly on timer): A
             // - DONE: Add a "random" boundary shape: S
 
