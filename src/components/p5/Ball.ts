@@ -69,7 +69,7 @@ export default class Ball {
     /**
      * Updates the ball's {@link velocity}, {@link position}, and sets its {@link acceleration} to 0
      */
-    public update(edges: Vector[]): void {
+    public update(edges: Vector[], enableRaycasting: boolean): void {
         this.velocity.add(this.acceleration);
         // Use steps instead of checking their positions directly to remove the change that a fast enough ball goes flying through the boundary
         const steps = Math.ceil(this.velocity.mag());
@@ -80,7 +80,7 @@ export default class Ball {
 
         for (let i = 0; i < steps; i++) {
             const nextPos = Vector.add(this.position, step);
-            const collision = this.collides(nextPos, edges);
+            const collision = this.collides(nextPos, edges, enableRaycasting);
             if (collision) {
                 const normal = collision.normal;
                 this.velocity.reflect(normal);
@@ -92,10 +92,10 @@ export default class Ball {
         this.acceleration.mult(0);
     }
 
-    public collides(nextPosition: Vector, vertices: Vector[]): { collided: boolean, normal: Vector } | null {
+    public collides(nextPosition: Vector, vertices: Vector[], enableRaycasting: boolean): { collided: boolean, normal: Vector } | null {
         let j = vertices.length - 1;
         for (let i = 0; i < vertices.length; j = i++) {
-            const collision = this.edgeIntersectsPoint(vertices[i], vertices[j], nextPosition, this.size);
+            const collision = this.edgeIntersectsPoint(vertices[i], vertices[j], nextPosition, this.size, enableRaycasting);
             if (collision) {
                 const edge = Vector.sub(vertices[j], vertices[i]);
                 const normal = this.p5.createVector(-edge.y, edge.x).normalize();
@@ -105,7 +105,7 @@ export default class Ball {
         return null;
     }
 
-    public edgeIntersectsPoint(edgeStart: Vector, edgeEnd: Vector, point: Vector, radius: number): boolean {
+    public edgeIntersectsPoint(edgeStart: Vector, edgeEnd: Vector, point: Vector, radius: number, enableRaycasting: boolean): boolean {
         const line = Vector.sub(edgeEnd, edgeStart);
         // Vector from edgeStart to point
         const vectorToPoint = Vector.sub(point, edgeStart);
@@ -129,13 +129,13 @@ export default class Ball {
         const distance = Vector.dist(point, closestToPoint);
 
         // DEBUGGING
-        if (distance > radius) {
+        if (enableRaycasting && distance > radius) {
             this.p5.stroke(255, 0, 0);
             this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
             this.p5.stroke(255, 0, 0);
             this.p5.line(edgeStart.x, edgeStart.y, edgeEnd.x, edgeEnd.y);
 
-        } else if (distance <= radius) {
+        } else if (enableRaycasting && distance <= radius) {
             this.p5.stroke(0, 255, 0);
             this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
         }

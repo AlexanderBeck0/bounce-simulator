@@ -13,6 +13,7 @@ interface P5CanvasProps {
     ballCount: number;
     ballSize: number;
     boundarySize: number;
+    isRaycastingEnabled: boolean;
     // forces: Force[];
 
     // Additional props
@@ -85,9 +86,8 @@ export default function P5Canvas(props: P5CanvasProps) {
 
             balls.forEach((ball, index) => {
                 ball.applyForces(forces);
-                ball.update(edges);
+                ball.update(edges, props.isRaycastingEnabled);
                 ball.display();
-                // ball.checkEdges(edges);
                 ball.checkSiblingCollision(balls);
 
                 // Remove any balls that go off screen

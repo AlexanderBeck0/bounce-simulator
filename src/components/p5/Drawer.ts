@@ -103,7 +103,7 @@ export default class Drawer {
             case "Triangle":
                 return this.calculateTriangleVertices(position, size);
             case "Random":
-                return this.calculateRandomShapeVertices(size)
+                return this.calculateRandomShapeVertices(size);
             default:
                 return [];
         }

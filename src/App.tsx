@@ -22,6 +22,7 @@ export default function App() {
 	const [currentBallSize, setCurrentBallSize] = useState<number>(5);
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 	const [segments, setSegments] = useState<number>(30);
+	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
 	// const [forces, setForces] = useState<Force[]>([]);
 
 
@@ -34,14 +35,16 @@ export default function App() {
 					changeBallSize={setCurrentBallSize}
 					changeBoundarySize={setCurrentBoundarySize}
 					changeSegments={setSegments}
+					changeRayCasting={setIsRaycastingEnabled}
 					shapes={Shapes}
 					boundaryShapes={BoundaryShapes}
-				currentShape={currentShape}
+					currentShape={currentShape}
 					currentBallShape={currentBallShape}
 					currentBallCount={currentBallCount}
 					currentBallSize={currentBallSize}
 					currentBoundarySize={currentBoundarySize}
 					segments={segments}
+					isRaycastingEnabled={isRaycastingEnabled}
 				/>
 			</div>
 			<div className="mt-2 flex items-center justify-center">
@@ -53,7 +56,8 @@ export default function App() {
 					ballCount={currentBallCount}
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
-					// forces={forces}
+					isRaycastingEnabled={isRaycastingEnabled}
+				// forces={forces}
 				/>
 			</div>
 		</div>

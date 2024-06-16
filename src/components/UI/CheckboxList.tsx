@@ -30,7 +30,7 @@ export default function CheckboxList(props: CheckboxListProps): JSX.Element {
     return (
         <div tabIndex={0} className="collapse collapse-arrow border border-base-300 bg-base-200">
             <input type="checkbox" className="peer" onClick={toggleDropdown} />
-            <div className="collapse-title">
+            <div className="collapse-title select-none">
                 {isDropdownOpen ? (props.openTitle || props.title) : props.title}
             </div>
             <div className="collapse-content">

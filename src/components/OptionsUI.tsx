@@ -9,6 +9,7 @@ interface OptionsUIProps {
     changeBallSize: (newSize: number) => void;
     changeBoundarySize: (newSize: number) => void;
     changeSegments: (newCount: number) => void;
+    changeRayCasting: (enabled: boolean) => void;
     shapes: Shape[];
     boundaryShapes: BoundaryShape[]
     currentShape?: BoundaryShape;
@@ -17,9 +18,13 @@ interface OptionsUIProps {
     currentBallSize?: number;
     currentBoundarySize?: number;
     segments?: number;
+    isRaycastingEnabled?: boolean;
 
     // Additional props
     className?: string;
+}
+function dummyHandler(isChecked: boolean): void {
+    console.log(isChecked);
 }
 export default function OptionsUI(props: OptionsUIProps): JSX.Element {
 
@@ -121,10 +126,27 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 props.changeBallSize(val.currentTarget.valueAsNumber)
                             }} />
                     </div>
-
                 </div>
                 <div className="flex-initial flex-nowrap">
                     <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={["Gravity"]} onCheckboxChange={handleCheckboxChange} />
+                </div>
+                <div className="flex flex-row flex-nowrap mt-1 select-none">
+                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                        <span className="label-text">Enable Ray-casting lines</span>
+                        <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
+                            checked={props.isRaycastingEnabled}
+                            onChange={val => props.changeRayCasting(val.currentTarget.checked)} />
+                    </label>
+                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                        <span className="label-text">DUMMY OPTION</span>
+                        <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
+                            onChange={val => dummyHandler(val.currentTarget.checked)} />
+                    </label>
+                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                        <span className="label-text">DUMMY OPTION</span>
+                        <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
+                            onChange={val => dummyHandler(val.currentTarget.checked)} />
+                    </label>
                 </div>
             </div>
         </div>
