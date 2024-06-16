@@ -38,12 +38,12 @@ export default class Boundary {
         this.drawer = new Drawer(this.p5);
     }
 
-    public createBoundary() {
+    public createBoundary(segments?: number) {
         this.p5.noFill();
         this.p5.stroke(0);
         this.p5.strokeWeight(3);
 
-        this.drawer.draw(this.shape, this.position, this.size);
+        this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined);
     }
     // #endregion
 }

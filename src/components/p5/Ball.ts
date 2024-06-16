@@ -1,13 +1,13 @@
 import { P5CanvasInstance } from '@p5-wrapper/react';
 import { Vector } from 'p5';
-import { Shape } from './../../App';
+import { Force, Shape } from './../../App';
 import Drawer from './Drawer';
 export default class Ball {
     // #region Variables
     p5: P5CanvasInstance;
     shape: Shape;
     /**
-     * Defaults to 10
+     * Defaults to 5
      */
     size: number;
     /**
@@ -22,7 +22,7 @@ export default class Ball {
      * The constructor for creating a ball. Initializes acceleration and velocity to 0
      * @param p5 A p5 instance
      * @param shape The shape of the ball
-     * @param size The size of the ball. Defaults to 10.
+     * @param size The size of the ball. Defaults to 5.
      * @param position The start position of the ball. Defaults to the center of the canvas.
      */
     constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector) {
@@ -31,7 +31,7 @@ export default class Ball {
 
         // Start position at center of canvas by default
         this.position = position || this.p5.createVector(p5.width / 2, p5.height / 2);
-        this.size = size || 10;
+        this.size = size || 5;
 
         this.acceleration = this.p5.createVector(0, 0);
         this.velocity = this.p5.createVector(0, 0);
@@ -49,10 +49,21 @@ export default class Ball {
 
     /**
      * Applys a force to the ball. Mutates {@link acceleration}
-     * @param force The force Vector to add to the ball
+     * @param force The force to add to the ball's {@link acceleration}. Only adds when `force.enabled` is `true`
      */
-    public applyForce(force: Vector): void {
-        this.acceleration.add(force);
+    public applyForce(force: Force): void {
+        if (force.enabled) {
+            const forceValue: Vector = typeof force.value === "function" ? force.value(this.size) : force.value;
+            this.acceleration.add(forceValue);
+        }
+    }
+
+    /**
+     * Applies all the forces in `forces` to the ball. Mutates {@link acceleration}
+     * @param forces The forces to add to the ball's {@link acceleration}. Only adds the ones where `force.enabled` is `true`
+     */
+    public applyForces(forces: Force[]): void {
+        forces.filter(force => force.enabled).forEach(this.applyForce.bind(this));
     }
 
     /**
