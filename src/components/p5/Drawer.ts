@@ -10,7 +10,7 @@ export default class Drawer {
 
     //#region Drawing
     public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): void {
-        switch(shape) {
+        switch (shape) {
             case "Square":
                 this.drawSquare(position, size);
                 break;
@@ -21,14 +21,14 @@ export default class Drawer {
                 this.drawTriangle(position, size);
                 break;
             case "Random":
-                if (vertices){
+                if (vertices) {
                     this.p5.beginShape()
-                    for (const v of vertices){
+                    for (const v of vertices) {
                         this.p5.vertex(v.x, v.y)
                     }
                     this.p5.endShape(this.p5.CLOSE)
                 }
-                else{
+                else {
                     this.drawRandomShape(position, size);
                 }
                 break;
@@ -77,7 +77,7 @@ export default class Drawer {
         this.p5.endShape(this.p5.CLOSE);
     }
 
-    private drawRandomShape(position:Vector, size:number){
+    private drawRandomShape(position: Vector, size: number) {
         const randomVertices = this.calculateVertices("Random", position, size)
         this.p5.beginShape()
         randomVertices.forEach(v => {
@@ -138,7 +138,7 @@ export default class Drawer {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
             const angle = this.p5.map(i, 0, segments, 0, this.p5.TWO_PI);
-            const vx = position.x + this.p5.cos(angle) * radius ;
+            const vx = position.x + this.p5.cos(angle) * radius;
             const vy = position.y + this.p5.sin(angle) * radius;
             vertices.push(this.p5.createVector(vx, vy));
         }

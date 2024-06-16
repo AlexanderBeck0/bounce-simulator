@@ -39,15 +39,15 @@ export default class Boundary {
         this.drawer = new Drawer(this.p5);
     }
 
-    public createBoundary() {
+    public createBoundary(segments?: number) {
         this.p5.noFill();
         this.p5.stroke(0);
         this.p5.strokeWeight(3);
 
-        if (this.shape === "Random" && this.vertices.length === 0){
+        if (this.shape === "Random" && this.vertices.length === 0) {
             this.vertices = this.drawer.calculateRandomShapeVertices(this.size)
         }
-        this.drawer.draw(this.shape, this.position, this.size, 30, this.vertices);
+        this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined, this.vertices);
     }
     // #endregion
 }

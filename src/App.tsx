@@ -1,3 +1,4 @@
+import { Vector } from 'p5';
 import { useState } from 'react';
 import './App.css';
 import OptionsUI from './components/OptionsUI';
@@ -8,35 +9,53 @@ const BoundaryShapes = ["Square", "Circle", "Triangle", "Random"]
 export type Shape = typeof Shapes[number];
 export type BoundaryShape = typeof BoundaryShapes[number];
 
-export default function App() {
+export type Force = {
+	name: string;
+	value: Vector | ((size: number) => Vector);
+	enabled: boolean;
+}
 
+export default function App() {
 	const [currentShape, setCurrentShape] = useState<Shape>("Square");
 	const [currentBallShape, setCurrentBallShape] = useState<Shape>("Circle");
 	const [currentBallCount, setCurrentBallCount] = useState<number>(0);
-	function changeShape(shape: Shape): void {
-		setCurrentShape(shape);
-	}
+	const [currentBallSize, setCurrentBallSize] = useState<number>(5);
+	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
+	const [segments, setSegments] = useState<number>(30);
+	// const [forces, setForces] = useState<Force[]>([]);
 
-	function changeBallShape(shape: Shape): void {
-		setCurrentBallShape(shape);
-	}
-
-	function changeBallCount(newCount: number): void {
-		setCurrentBallCount(newCount);
-	}
 
 	return (
-		<>
-			<OptionsUI changeShape={changeShape}
-				changeBallShape={changeBallShape}
-				changeBallCount={changeBallCount}
-				shapes={Shapes}
-				boundaryShapes={BoundaryShapes}
+		<div className="flex-col">
+			<div>
+				<OptionsUI changeShape={setCurrentShape}
+					changeBallShape={setCurrentBallShape}
+					changeBallCount={setCurrentBallCount}
+					changeBallSize={setCurrentBallSize}
+					changeBoundarySize={setCurrentBoundarySize}
+					changeSegments={setSegments}
+					shapes={Shapes}
+					boundaryShapes={BoundaryShapes}
 				currentShape={currentShape}
-				currentBallShape={currentBallShape}
-				currentBallCount={currentBallCount}
-			/>
-			<P5Canvas shape={currentShape} ballShape={currentBallShape} ballCount={currentBallCount} shapes={Shapes} />
-		</>
+					currentBallShape={currentBallShape}
+					currentBallCount={currentBallCount}
+					currentBallSize={currentBallSize}
+					currentBoundarySize={currentBoundarySize}
+					segments={segments}
+				/>
+			</div>
+			<div className="mt-2 flex items-center justify-center">
+				<P5Canvas
+					// changeForces={setForces}
+					shape={currentShape}
+					segments={segments}
+					ballShape={currentBallShape}
+					ballCount={currentBallCount}
+					ballSize={currentBallSize}
+					boundarySize={currentBoundarySize}
+					// forces={forces}
+				/>
+			</div>
+		</div>
 	)
 }
