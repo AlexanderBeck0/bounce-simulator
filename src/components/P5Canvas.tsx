@@ -91,8 +91,8 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.checkSiblingCollision(balls);
 
                 // Remove any balls that go off screen
-                if (ball.position.x + ball.size > 600 || ball.position.x + ball.size < -600) balls.splice(index, 1);
-                if (ball.position.y + ball.size > 400 || ball.position.y + ball.size < -400) balls.splice(index, 1);
+                if (ball.position.x + ball.size > p5.width || ball.position.x + ball.size < -p5.width) balls.splice(index, 1);
+                if (ball.position.y + ball.size > p5.height || ball.position.y + ball.size < -p5.height) balls.splice(index, 1);
             });
 
             p5.mouseClicked = () => {

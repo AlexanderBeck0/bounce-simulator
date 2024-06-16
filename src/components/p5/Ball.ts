@@ -1,5 +1,5 @@
 import { P5CanvasInstance } from '@p5-wrapper/react';
-import { Vector } from 'p5';
+import { Color, Vector } from 'p5';
 import { Force, Shape } from './../../App';
 import Drawer from './Drawer';
 export default class Ball {
@@ -17,6 +17,7 @@ export default class Ball {
     velocity: Vector;
     acceleration: Vector;
     drawer: Drawer;
+    rayColor: Color;
     // #endregion
     /**
      * The constructor for creating a ball. Initializes acceleration and velocity to 0
@@ -25,7 +26,7 @@ export default class Ball {
      * @param size The size of the ball. Defaults to 5.
      * @param position The start position of the ball. Defaults to the center of the canvas.
      */
-    constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector) {
+    constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector, color?: Color) {
         this.p5 = p5;
         this.shape = shape;
 
@@ -37,6 +38,7 @@ export default class Ball {
         this.velocity = this.p5.createVector(0, 0);
 
         this.drawer = new Drawer(this.p5);
+        this.rayColor = color || this.p5.color(this.p5.random(255), this.p5.random(255), this.p5.random(255));
     }
 
     public display(): void {
@@ -130,14 +132,11 @@ export default class Ball {
 
         // DEBUGGING
         if (enableRaycasting && distance > radius) {
-            this.p5.stroke(255, 0, 0);
+            this.p5.fill(this.rayColor);
             this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
-            this.p5.stroke(255, 0, 0);
-            this.p5.line(edgeStart.x, edgeStart.y, edgeEnd.x, edgeEnd.y);
-
-        } else if (enableRaycasting && distance <= radius) {
-            this.p5.stroke(0, 255, 0);
-            this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
+            this.p5.stroke(this.rayColor);
+            this.p5.strokeWeight(Math.floor(this.size / 4));
+            this.p5.line(closestToPoint.x, closestToPoint.y, point.x, point.y);
         }
         // END DEBUGGING
 
