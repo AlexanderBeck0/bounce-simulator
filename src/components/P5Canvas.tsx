@@ -7,6 +7,7 @@ import Drawer from "./p5/Drawer";
 
 interface P5CanvasProps {
     // changeForces: (newForces: Force[]) => void;
+    addForce: (force: Force) => void;
     shape: BoundaryShape;
     segments: number;
     ballShape: Shape;
@@ -14,7 +15,7 @@ interface P5CanvasProps {
     ballSize: number;
     boundarySize: number;
     isRaycastingEnabled: boolean;
-    // forces: Force[];
+    forces: Force[];
 
     // Additional props
     className?: string;
@@ -28,11 +29,19 @@ export default function P5Canvas(props: P5CanvasProps) {
         let boundary: Boundary;
         let edges: Vector[];
         const drawer = new Drawer(p5);
-        const forces: Force[] = [
+        /**
+         * @tutorial force To add a new force, simply add a new object with the name, value, and enabled fields.
+         */
+        let forces: Force[] = [
             {
                 name: "Gravity",
                 value: (size: number) => p5.createVector(0, 0.1 * size),
                 enabled: true
+            },
+            {
+                name: "Anti-Gravity",
+                value: (size: number) => p5.createVector(0, -0.1 * size),
+                enabled: false
             },
             {
                 name: "Right Force",
@@ -45,6 +54,9 @@ export default function P5Canvas(props: P5CanvasProps) {
                 enabled: false
             },
         ];
+        if (props.forces.length > 0) forces = props.forces;
+        else forces.forEach(props.addForce);
+
 
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
@@ -55,21 +67,6 @@ export default function P5Canvas(props: P5CanvasProps) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
                 balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
             }
-        }
-
-        function enableForce(forceName: string): void {
-            const foundForces: Force[] = forces.filter(force => force.name === forceName);
-            if (foundForces.length > 0) {
-                foundForces[0].enabled = true;
-            }
-        }
-
-        function disableForce(forceName: string): void {
-            const foundForces: Force[] = forces.filter(force => force.name === forceName);
-            if (foundForces.length > 0) {
-                foundForces[0].enabled = false;
-            }
-
         }
 
         p5.draw = () => {

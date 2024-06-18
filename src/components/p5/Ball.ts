@@ -76,8 +76,11 @@ export default class Ball {
         // Use steps instead of checking their positions directly to remove the change that a fast enough ball goes flying through the boundary
         const steps = Math.ceil(this.velocity.mag());
         const step = this.p5.createVector();
-        if (this.velocity.x === 0) this.velocity.add(0.01);
-        if (this.velocity.y === 0) this.velocity.add(0.01)
+        // If the velocity is 0, just leave it in place
+        if (this.velocity.equals(0, 0)) {
+            return;
+        }
+
         Vector.div(this.velocity, steps, step);
 
         for (let i = 0; i < steps; i++) {
@@ -130,7 +133,7 @@ export default class Ball {
         const closestToPoint = Vector.add(edgeStart, closest);
         const distance = Vector.dist(point, closestToPoint);
 
-        // DEBUGGING
+        // Note: This is SUPER laggy (did not realize when I wrote this because I was not on my laptop)
         if (enableRaycasting && distance > radius) {
             this.p5.fill(this.rayColor);
             this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
@@ -138,7 +141,6 @@ export default class Ball {
             this.p5.strokeWeight(Math.floor(this.size / 4));
             this.p5.line(closestToPoint.x, closestToPoint.y, point.x, point.y);
         }
-        // END DEBUGGING
 
         return distance <= radius;
     }

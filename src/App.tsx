@@ -1,5 +1,5 @@
 import { Vector } from 'p5';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import OptionsUI from './components/OptionsUI';
 import P5Canvas from './components/P5Canvas';
@@ -23,7 +23,17 @@ export default function App() {
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 	const [segments, setSegments] = useState<number>(30);
 	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
+	const forcesRef = useRef<Force[]>([]);
 	// const [forces, setForces] = useState<Force[]>([]);
+
+	function addForce(force: Force) {
+		const isDuplicate = forcesRef.current.some(newForce => newForce.name === force.name);
+		if (!isDuplicate) {
+			forcesRef.current.push(force);
+		} else {
+			forcesRef.current.find(existingForce => existingForce.name === force.name)!.enabled = force.enabled;
+		}
+	}
 
 
 	return (
@@ -45,11 +55,13 @@ export default function App() {
 					currentBoundarySize={currentBoundarySize}
 					segments={segments}
 					isRaycastingEnabled={isRaycastingEnabled}
+					forces={forcesRef.current}
 				/>
 			</div>
 			<div className="mt-2 flex items-center justify-center">
 				<P5Canvas
 					// changeForces={setForces}
+					addForce={addForce}
 					shape={currentShape}
 					segments={segments}
 					ballShape={currentBallShape}
@@ -57,7 +69,7 @@ export default function App() {
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
 					isRaycastingEnabled={isRaycastingEnabled}
-				// forces={forces}
+					forces={forcesRef.current}
 				/>
 			</div>
 		</div>

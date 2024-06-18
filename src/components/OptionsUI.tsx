@@ -1,5 +1,5 @@
 import { JSX } from "react/jsx-runtime";
-import { BoundaryShape, Shape } from "../App";
+import { BoundaryShape, Force, Shape } from "../App";
 import CheckboxList from "./UI/CheckboxList";
 
 interface OptionsUIProps {
@@ -19,6 +19,7 @@ interface OptionsUIProps {
     currentBoundarySize?: number;
     segments?: number;
     isRaycastingEnabled?: boolean;
+    forces: Force[];
 
     // Additional props
     className?: string;
@@ -37,8 +38,8 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         }
     }
 
-    function handleCheckboxChange(checked: boolean, index: number): void {
-        console.log(`Checkbox at index ${index} is now ${checked ? 'checked' : 'unchecked'}`);
+    function handleCheckboxChange(force: string, checked: boolean): void {
+        props.forces.find(changedForce => changedForce.name === force)!.enabled = checked;
     }
 
     // TODO: Disable autofill
@@ -128,7 +129,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     </div>
                 </div>
                 <div className="flex-initial flex-nowrap">
-                    <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={["Gravity"]} onCheckboxChange={handleCheckboxChange} />
+                    <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={props.forces} onCheckboxChange={handleCheckboxChange} />
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none">
                     <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
