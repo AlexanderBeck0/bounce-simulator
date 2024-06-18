@@ -132,22 +132,29 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={props.forces} onCheckboxChange={handleCheckboxChange} />
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none">
-                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
                         <span className="label-text">Enable Ray-casting lines</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
                             checked={props.isRaycastingEnabled}
                             onChange={val => props.changeRayCasting(val.currentTarget.checked)} />
                     </label>
-                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
                         <span className="label-text">DUMMY OPTION</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
                             onChange={val => dummyHandler(val.currentTarget.checked)} />
                     </label>
-                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
                         <span className="label-text">DUMMY OPTION</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
                             onChange={val => dummyHandler(val.currentTarget.checked)} />
                     </label>
+                </div>
+                <div className="flex flex-row flex-nowrap mt-1 select-none">
+                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
+                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
+                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
+                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
+                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                 </div>
             </div>
         </div>
