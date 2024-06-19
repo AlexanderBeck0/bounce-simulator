@@ -7,6 +7,9 @@ import { useRef } from "react";
 interface P5CanvasProps {
     // changeForces: (newForces: Force[]) => void;
     addForce: (force: Force) => void;
+    addBall: (ball: Ball) => void;
+    removeBalls: (index: number, count: number) => void;
+    balls: Ball[];
     shape: BoundaryShape;
     segments: number;
     ballShape: Shape;
@@ -22,8 +25,7 @@ interface P5CanvasProps {
 let rerenders = 0;
 export default function P5Canvas(props: P5CanvasProps) {
     // const [rotation, setRotation] = useState(0);
-    const balls: Ball[] = [];
-    const boundaryRef = useRef<Boundary|null>(null);
+    const boundaryRef = useRef<Boundary | null>(null);
 
     const sketch: Sketch = p5 => {
         console.log(rerenders++)
@@ -67,7 +69,8 @@ export default function P5Canvas(props: P5CanvasProps) {
 
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
-                balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
+                // balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
+                props.addBall(new Ball(p5, props.ballShape, props.ballSize, startPosition));
             }
         }
 
@@ -81,22 +84,22 @@ export default function P5Canvas(props: P5CanvasProps) {
             // const edges = boundary.createBoundary(props.segments);
             const edges = boundaryRef.current!.createBoundary(props.segments);
 
-            balls.forEach((ball, index) => {
+            props.balls.forEach((ball, index) => {
                 ball.applyForces(forces);
                 ball.update(edges, props.isRaycastingEnabled);
                 ball.display();
-                ball.checkSiblingCollision(balls);
+                ball.checkSiblingCollision(props.balls);
 
                 // Remove any balls that go off screen
-                if (ball.position.x + ball.size > p5.width || ball.position.x + ball.size < -p5.width) balls.splice(index, 1);
-                if (ball.position.y + ball.size > p5.height || ball.position.y + ball.size < -p5.height) balls.splice(index, 1);
+                if (ball.position.x + ball.size > p5.width || ball.position.x + ball.size < -p5.width) props.removeBalls(index, 1);
+                if (ball.position.y + ball.size > p5.height || ball.position.y + ball.size < -p5.height) props.removeBalls(index, 1);
             });
 
             p5.mouseClicked = () => {
                 if (p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
-                    balls.push(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
+                    props.addBall(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
                 }
             }
 

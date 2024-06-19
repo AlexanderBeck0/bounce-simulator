@@ -3,6 +3,7 @@ import { useRef, useState } from 'react';
 import './App.css';
 import OptionsUI from './components/OptionsUI';
 import P5Canvas from './components/P5Canvas';
+import Ball from './components/p5/Ball';
 
 const Shapes = ["Square", "Circle", "Triangle"];
 const BoundaryShapes = ["Square", "Circle", "Triangle", "Random"]
@@ -24,8 +25,12 @@ export default function App() {
 	const [segments, setSegments] = useState<number>(30);
 	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
 	const forcesRef = useRef<Force[]>([]);
-	// const [forces, setForces] = useState<Force[]>([]);
+	const ballsRef = useRef<Ball[]>([]);
 
+	/**
+	 * Adds a force to {@link forcesRef}
+	 * @param force The force to add
+	 */
 	function addForce(force: Force) {
 		const isDuplicate = forcesRef.current.some(newForce => newForce.name === force.name);
 		if (!isDuplicate) {
@@ -33,6 +38,30 @@ export default function App() {
 		} else {
 			forcesRef.current.find(existingForce => existingForce.name === force.name)!.enabled = force.enabled;
 		}
+	}
+
+	/**
+	 * Adds a ball to {@link ballsRef}
+	 * @param ball The ball to add
+	 */
+	function addBall(ball: Ball) {
+		ballsRef.current.push(ball);
+	}
+
+	/**
+	 * Removes balls from {@link ballsRef}
+	 * @param index The zero-based location in the array from which to start removing balls.
+	 * @param count The number of balls to remove.
+	 */
+	function removeBalls(index: number, count: number) {
+		ballsRef.current.splice(index, count);
+	}
+
+	/**
+	 * Calls {@link removeBalls()} to remove all the balls from {@link ballsRef}
+	 */
+	function clearBalls() {
+		removeBalls(0, ballsRef.current.length);
 	}
 
 
@@ -46,6 +75,7 @@ export default function App() {
 					changeBoundarySize={setCurrentBoundarySize}
 					changeSegments={setSegments}
 					changeRayCasting={setIsRaycastingEnabled}
+					clearBalls={clearBalls}
 					shapes={Shapes}
 					boundaryShapes={BoundaryShapes}
 					currentShape={currentShape}
@@ -62,6 +92,9 @@ export default function App() {
 				<P5Canvas
 					// changeForces={setForces}
 					addForce={addForce}
+					addBall={addBall}
+					removeBalls={removeBalls}
+					balls={ballsRef.current}
 					shape={currentShape}
 					segments={segments}
 					ballShape={currentBallShape}

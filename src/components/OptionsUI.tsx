@@ -10,6 +10,7 @@ interface OptionsUIProps {
     changeBoundarySize: (newSize: number) => void;
     changeSegments: (newCount: number) => void;
     changeRayCasting: (enabled: boolean) => void;
+    clearBalls: () => void;
     shapes: Shape[];
     boundaryShapes: BoundaryShape[]
     currentShape?: BoundaryShape;
@@ -150,7 +151,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     </label>
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none">
-                    <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
+                    <button onClick={props.clearBalls} className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">Clear Balls</button>
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
