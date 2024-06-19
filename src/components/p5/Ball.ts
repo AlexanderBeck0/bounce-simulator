@@ -128,18 +128,24 @@ export default class Ball {
         // Clamp projection to be on the edge
         projection = this.p5.constrain(projection, 0, 1);
 
-        const closest = this.p5.createVector();
+        /*const closest = this.p5.createVector();
         Vector.mult(line, projection, closest);
-        const closestToPoint = Vector.add(edgeStart, closest);
-        const distance = Vector.dist(point, closestToPoint);
+        const closestToPoint = Vector.add(edgeStart, closest);*/
+        const closest = line.copy().mult(projection).add(edgeStart);
+        // const distance = Vector.dist(point, closestToPoint);
+        const distance = Vector.dist(point, closest);
 
         // Note: This is SUPER laggy (did not realize when I wrote this because I was not on my laptop)
-        if (enableRaycasting && distance > radius) {
+        if (enableRaycasting && distance > radius && distance < 200) {
+            this.p5.push();
             this.p5.fill(this.rayColor);
-            this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
             this.p5.stroke(this.rayColor);
             this.p5.strokeWeight(Math.floor(this.size / 4));
-            this.p5.line(closestToPoint.x, closestToPoint.y, point.x, point.y);
+            /*this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
+            this.p5.line(closestToPoint.x, closestToPoint.y, point.x, point.y);*/
+            this.p5.circle(closest.x, closest.y, this.size);
+            this.p5.line(closest.x, closest.y, point.x, point.y);
+            this.p5.pop();
         }
 
         return distance <= radius;
