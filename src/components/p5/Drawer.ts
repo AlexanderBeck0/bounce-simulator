@@ -9,7 +9,7 @@ export default class Drawer {
     }
 
     //#region Drawing
-    public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): Vector[] | undefined {
+    public draw(shape: Shape, position: Vector, size: number, segments?: number, vertices?: Vector[]): Vector[] {
         switch (shape) {
             case "Square":
                 return this.drawSquare(position, size);

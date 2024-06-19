@@ -39,7 +39,7 @@ export default class Boundary {
         this.drawer = new Drawer(this.p5);
     }
 
-    public createBoundary(segments?: number): Vector[] | undefined {
+    public createBoundary(segments?: number): Vector[] {
         this.p5.noFill();
         this.p5.stroke(0);
         this.p5.strokeWeight(3);

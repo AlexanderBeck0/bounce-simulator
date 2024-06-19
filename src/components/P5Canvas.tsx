@@ -1,9 +1,8 @@
 import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
-import { Vector } from "p5";
 import { BoundaryShape, Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
-import Drawer from "./p5/Drawer";
+import { useRef } from "react";
 
 interface P5CanvasProps {
     // changeForces: (newForces: Force[]) => void;
@@ -20,15 +19,15 @@ interface P5CanvasProps {
     // Additional props
     className?: string;
 }
-
+let rerenders = 0;
 export default function P5Canvas(props: P5CanvasProps) {
     // const [rotation, setRotation] = useState(0);
     const balls: Ball[] = [];
+    const boundaryRef = useRef<Boundary|null>(null);
 
     const sketch: Sketch = p5 => {
-        let boundary: Boundary;
-        let edges: Vector[];
-        const drawer = new Drawer(p5);
+        console.log(rerenders++)
+        // let boundary: Boundary;
         /**
          * @tutorial force To add a new force, simply add a new object with the name, value, and enabled fields.
          */
@@ -57,11 +56,14 @@ export default function P5Canvas(props: P5CanvasProps) {
         if (props.forces.length > 0) forces = props.forces;
         else forces.forEach(props.addForce);
 
-
         p5.setup = () => {
             p5.createCanvas(600, 400, p5.WEBGL);
-            boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
-            edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
+            // boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
+            boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
+            // Note: This is broken. Changing anything with the same shape hides the shape
+            // if (!boundaryRef.current || props.shape !== boundaryRef.current.shape) {
+            //     boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
+            // }
 
             for (let i = 0; i < props.ballCount; i++) {
                 const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
@@ -76,10 +78,8 @@ export default function P5Canvas(props: P5CanvasProps) {
                 p5.rotateY(rotation);
             }*/
             // p5.push();
-            // if (props.shape === "Circle" && props.segments) {
-            //     edges = drawer.calculateVertices(boundary.shape, boundary.position, boundary.size, props.segments);
-            // }
-            edges = boundary.createBoundary(props.segments) || edges;
+            // const edges = boundary.createBoundary(props.segments);
+            const edges = boundaryRef.current!.createBoundary(props.segments);
 
             balls.forEach((ball, index) => {
                 ball.applyForces(forces);
