@@ -25,13 +25,14 @@ export default function App() {
 	const [segments, setSegments] = useState<number>(30);
 	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
 	const forcesRef = useRef<Force[]>([]);
+	// const collisionsRef = useRef<boolean[]>([true, true]);
 	const ballsRef = useRef<Ball[]>([]);
 
 	/**
 	 * Adds a force to {@link forcesRef}
 	 * @param force The force to add
 	 */
-	function addForce(force: Force) {
+	function addForce(force: Force): void {
 		const isDuplicate = forcesRef.current.some(newForce => newForce.name === force.name);
 		if (!isDuplicate) {
 			forcesRef.current.push(force);
@@ -39,6 +40,21 @@ export default function App() {
 			forcesRef.current.find(existingForce => existingForce.name === force.name)!.enabled = force.enabled;
 		}
 	}
+
+	/**
+	 * Removes a force from {@link forcesRef}
+	 * @param forceName The name of the force to remove
+	 */
+	function removeForce(forceName: string): void {
+		const indexOfForce = forcesRef.current.findIndex(existingForce => existingForce.name === forceName);
+		if (indexOfForce !== -1) {
+			forcesRef.current.splice(indexOfForce, 1);
+		}
+	}
+
+	// function addCollision(collisionIndex: number) {
+	// 	throw "not finished"
+	// }
 
 	/**
 	 * Adds a ball to {@link ballsRef}
@@ -76,6 +92,7 @@ export default function App() {
 					changeSegments={setSegments}
 					changeRayCasting={setIsRaycastingEnabled}
 					clearBalls={clearBalls}
+					removeForce={removeForce}
 					shapes={Shapes}
 					boundaryShapes={BoundaryShapes}
 					currentShape={currentShape}
