@@ -31,8 +31,8 @@ export default class Boundary {
         this.drawnBoundary.push(vertex)
     }
 
-    public clearCanvas(){
-        this.p5.background(255)
+    public clearDrawnBoundary(){
+        this.drawnBoundary = []
     }
 
     // #endregion

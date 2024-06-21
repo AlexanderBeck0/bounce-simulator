@@ -2,7 +2,7 @@ import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
 import { BoundaryShape, Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
-import { useRef } from "react";
+import {useRef} from "react";
 import {Vector} from "p5";
 
 interface P5CanvasProps {
@@ -29,7 +29,7 @@ export default function P5Canvas(props: P5CanvasProps) {
     // const [rotation, setRotation] = useState(0);
     const boundaryRef = useRef<Boundary | null>(null);
 
-    const sketch: Sketch = p5 => {
+    const sketch: Sketch = (p5) => {
         let isDrawingBoundary = false
         let lastVertex: Vector | undefined
         console.log(rerenders++)
@@ -86,8 +86,9 @@ export default function P5Canvas(props: P5CanvasProps) {
             // if(props.shape == "Draw") console.log("Drawing")
             // isDrawing = true
 
-            if(props.shape === "Draw"){
+            if(props.shape === "Draw" && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled){
                 isDrawingBoundary = true
+                boundaryRef.current!.clearDrawnBoundary()
                 const x = p5.mouseX - p5.width / 2
                 const y = p5.mouseY - p5.height / 2
                 lastVertex = p5.createVector(x, y)
@@ -103,7 +104,7 @@ export default function P5Canvas(props: P5CanvasProps) {
             // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled) {
             //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
             // }
-            if (isDrawingBoundary&& boundaryRef && boundaryRef.current){
+            if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height){
                 const x = p5.mouseX - p5.width / 2
                 const y = p5.mouseY - p5.height / 2
                 lastVertex = p5.createVector(x, y)
@@ -184,7 +185,6 @@ export default function P5Canvas(props: P5CanvasProps) {
         //p5.updateWithProps = props => {
         //};
     }
-
 
     /*useEffect(() => {
         const interval = setInterval(() => {
