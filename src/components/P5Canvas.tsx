@@ -77,7 +77,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 props.addBall(new Ball(p5, props.ballShape, props.ballSize, startPosition));
             }
 
-            canvas.elt.addEventListener("contextmenu", (e) => e.preventDefault())
+            canvas.elt.addEventListener("contextmenu", (e: MouseEvent) => e.preventDefault())
         }
 
         // p5.mousePressed = () => {
@@ -97,21 +97,7 @@ export default function P5Canvas(props: P5CanvasProps) {
         //     }
         // }
 
-        p5.mouseReleased = () => {
-            isDrawingBoundary = false
-            lastVertex = undefined
-        }
 
-        p5.mouseDragged = () => {
-            // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled) {
-            //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
-            // }
-            if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height){
-                const x = p5.mouseX - p5.width / 2
-                const y = p5.mouseY - p5.height / 2
-                lastVertex = p5.createVector(x, y)
-            }
-        }
 
         function enableForce(forceName: string): void {
             const foundForces: Force[] = forces.filter(force => force.name === forceName);
@@ -163,6 +149,22 @@ export default function P5Canvas(props: P5CanvasProps) {
                 else if(props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled){
                     isDrawingBoundary = true
                     boundaryRef.current!.clearDrawnBoundary()
+                    const x = p5.mouseX - p5.width / 2
+                    const y = p5.mouseY - p5.height / 2
+                    lastVertex = p5.createVector(x, y)
+                }
+            }
+
+            p5.mouseReleased = () => {
+                isDrawingBoundary = false
+                lastVertex = undefined
+            }
+
+            p5.mouseDragged = () => {
+                // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled) {
+                //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
+                // }
+                if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height){
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
                     lastVertex = p5.createVector(x, y)
