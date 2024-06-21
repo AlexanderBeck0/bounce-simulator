@@ -35,6 +35,26 @@ export default class Boundary {
         this.drawnBoundary = []
     }
 
+    public isPointInside(x: number, y: number): boolean {
+        let inside = false
+        let i, j
+
+        for (i = 0, j = this.drawnBoundary.length - 1; i < this.drawnBoundary.length; i++){
+            if (
+                this.drawnBoundary[i].y > y != this.drawnBoundary[j].y > y &&
+                x <
+                ((this.drawnBoundary[j].x - this.drawnBoundary[i].x) * (y - this.drawnBoundary[i].y)) /
+                (this.drawnBoundary[j].y - this.drawnBoundary[i].y) +
+                this.drawnBoundary[i].x
+            ) {
+                inside = !inside
+            }
+            j = i
+        }
+
+        return inside
+    }
+
     // #endregion
     constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector) {
         this.p5 = p5;

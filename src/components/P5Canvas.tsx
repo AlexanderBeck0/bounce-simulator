@@ -90,7 +90,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 ball.applyForces(forces);
                 ball.update(edges, props.isRaycastingEnabled);
                 ball.display();
-                ball.checkSiblingCollision(props.balls);
+                ball.checkSiblingCollision(props.balls, boundaryRef.current!);
 
                 // Remove any balls that go off screen
                 if (ball.position.x + ball.size > p5.width || ball.position.x + ball.size < -p5.width) props.removeBalls(index, 1);

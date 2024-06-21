@@ -2,6 +2,7 @@ import { P5CanvasInstance } from '@p5-wrapper/react';
 import { Color, Vector } from 'p5';
 import { Force, Shape } from './../../App';
 import Drawer from './Drawer';
+import Boundary from "./Boundary.ts";
 export default class Ball {
     // #region Variables
     p5: P5CanvasInstance;
@@ -151,7 +152,7 @@ export default class Ball {
         return distance <= radius;
     }
 
-    public checkSiblingCollision(balls: Ball[]) {
+    public checkSiblingCollision(balls: Ball[], boundary: Boundary) {
         // Get siblings within a certain radius of this ball (to improve performance)
         // For now, get all balls (will improve performance later)
         // https://www.gorillasun.de/blog/an-algorithm-for-particle-systems-with-collisions/
@@ -177,17 +178,29 @@ export default class Ball {
                 const adjustedBallVelocity = this.p5.createVector();
                 Vector.div(impulse, ball.size, adjustedBallVelocity);
 
-                this.velocity.add(adjustedVelocity);
-                ball.velocity.sub(adjustedBallVelocity);
-
                 const adjustedPosition = this.p5.createVector();
                 Vector.div(bounce, this.size, adjustedPosition);
 
                 const adjustedBallPosition = this.p5.createVector();
                 Vector.div(bounce, ball.size, adjustedBallPosition);
 
-                this.position.sub(adjustedPosition);
-                ball.position.add(adjustedBallPosition);
+                if (boundary.isPointInside(this.position.x + adjustedPosition.x, this.position.y + adjustedPosition.y)){
+                    this.velocity.add(adjustedVelocity);
+                    this.position.sub(adjustedPosition);
+                }
+                else{
+                    this.velocity.sub(adjustedVelocity);
+                    this.position.add(adjustedPosition);
+                }
+
+                if (boundary.isPointInside(ball.position.x + adjustedBallPosition.x, ball.position.y + adjustedBallPosition.y)){
+                    ball.velocity.sub(adjustedBallVelocity);
+                    ball.position.add(adjustedBallPosition);
+                }
+                else{
+                    ball.velocity.add(adjustedBallVelocity);
+                    ball.position.sub(adjustedBallPosition);
+                }
 
             }
         }
