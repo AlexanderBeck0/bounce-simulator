@@ -137,10 +137,8 @@ export default function P5Canvas(props: P5CanvasProps) {
             // const edges = boundary.createBoundary(props.segments);
             const edges = boundaryRef.current!.createBoundary(props.segments);
 
-            if (isDrawingBoundary){
-                if (lastVertex && boundaryRef && boundaryRef.current){
-                    boundaryRef.current.addVertexToDrawnBoundary(lastVertex)
-                }
+            if (isDrawingBoundary && boundaryRef.current && lastVertex){
+                boundaryRef.current.addVertexToDrawnBoundary(lastVertex)
             }
 
             props.balls.forEach((ball, index) => {
