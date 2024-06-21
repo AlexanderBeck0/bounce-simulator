@@ -6,7 +6,7 @@ import P5Canvas from './components/P5Canvas';
 import Ball from './components/p5/Ball';
 
 const Shapes = ["Square", "Circle", "Triangle"];
-const BoundaryShapes = ["Square", "Circle", "Triangle", "Random"]
+const BoundaryShapes = ["Square", "Circle", "Triangle", "Random", "Draw"]
 export type Shape = typeof Shapes[number];
 export type BoundaryShape = typeof BoundaryShapes[number];
 
@@ -24,6 +24,8 @@ export default function App() {
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 	const [segments, setSegments] = useState<number>(30);
 	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
+	const [isBallDroppingEnabled, setIsBallDroppingEnabled] = useState<boolean>(false)
+	// const [forces, setForces] = useState<Force[]>([]);
 	const forcesRef = useRef<Force[]>([]);
 	// const collisionsRef = useRef<boolean[]>([true, true]);
 	const ballsRef = useRef<Ball[]>([]);
@@ -91,6 +93,7 @@ export default function App() {
 					changeBoundarySize={setCurrentBoundarySize}
 					changeSegments={setSegments}
 					changeRayCasting={setIsRaycastingEnabled}
+					changeBallDropping={setIsBallDroppingEnabled}
 					clearBalls={clearBalls}
 					removeForce={removeForce}
 					shapes={Shapes}
@@ -102,6 +105,7 @@ export default function App() {
 					currentBoundarySize={currentBoundarySize}
 					segments={segments}
 					isRaycastingEnabled={isRaycastingEnabled}
+					isBallDroppingEnabled={isBallDroppingEnabled}
 					forces={forcesRef.current}
 				/>
 			</div>
@@ -119,6 +123,7 @@ export default function App() {
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
 					isRaycastingEnabled={isRaycastingEnabled}
+					isBallDroppingEnabled={isBallDroppingEnabled}
 					forces={forcesRef.current}
 				/>
 			</div>

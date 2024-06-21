@@ -25,6 +25,15 @@ export default class Boundary {
      * The position of the boundary.
      */
     public position: Vector;
+    private drawnBoundary: Vector[] = []
+
+    public addVertexToDrawnBoundary(vertex: Vector){
+        this.drawnBoundary.push(vertex)
+    }
+
+    public clearDrawnBoundary(){
+        this.drawnBoundary = []
+    }
 
     // #endregion
     constructor(p5: P5CanvasInstance, shape: Shape, size?: number, position?: Vector) {
@@ -47,7 +56,16 @@ export default class Boundary {
         if (this.shape === "Random" && this.vertices.length === 0) {
             this.vertices = this.drawer.calculateRandomShapeVertices(this.size)
         }
+        if (this.shape === "Draw"){
+            this.p5.beginShape()
+            for (const vertex of this.drawnBoundary){
+                this.p5.vertex(vertex.x, vertex.y)
+            }
+            this.p5.endShape(this.p5.CLOSE)
+            return this.drawnBoundary
+        }
         return this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined, this.vertices);
     }
+
     // #endregion
 }
