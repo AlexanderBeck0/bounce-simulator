@@ -1,7 +1,7 @@
 import { JSX } from "react/jsx-runtime";
 import { BoundaryShape, Force, Shape } from "../App";
 import CheckboxList from "./UI/CheckboxList";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 
 interface OptionsUIProps {
     changeShape: (newShape: BoundaryShape) => void;
@@ -28,6 +28,7 @@ interface OptionsUIProps {
 
     // Additional props
     className?: string;
+    children?: ReactNode;
 }
 function dummyHandler(isChecked: boolean): void {
     console.log(isChecked);
@@ -198,6 +199,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                 </div>
             </div>
+            {props.children}
         </div>
     );
 }

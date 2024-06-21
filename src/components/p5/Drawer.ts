@@ -19,11 +19,7 @@ export default class Drawer {
                 return this.drawTriangle(position, size);
             case "Random":
                 if (vertices) {
-                    this.p5.beginShape()
-                    for (const v of vertices) {
-                        this.p5.vertex(v.x, v.y)
-                    }
-                    this.p5.endShape(this.p5.CLOSE)
+                    this.drawVertices(vertices);
                     return vertices;
                 }
                 else {
@@ -31,6 +27,19 @@ export default class Drawer {
                 }
             default:
                 throw "Unknown shape. Cannot draw.";
+        }
+    }
+
+    
+    public drawVertices(vertices: Vector[]) {
+        if (vertices) {
+            this.p5.push();
+            this.p5.beginShape();
+            for (const v of vertices) {
+                this.p5.vertex(v.x, v.y);
+            }
+            this.p5.endShape(this.p5.CLOSE);
+            this.p5.pop();
         }
     }
 

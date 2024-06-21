@@ -62,9 +62,15 @@ export default class Boundary {
                 this.p5.vertex(vertex.x, vertex.y)
             }
             this.p5.endShape(this.p5.CLOSE)
+            this.vertices = this.drawnBoundary;
             return this.drawnBoundary
         }
-        return this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined, this.vertices);
+        this.vertices = this.drawer.draw(this.shape, this.position, this.size, this.shape === "Circle" ? segments : undefined, this.vertices);
+        return this.vertices;
+    }
+
+    public draw(vertices?: Vector[]) {
+        this.drawer.drawVertices(vertices || this.vertices);
     }
 
     // #endregion

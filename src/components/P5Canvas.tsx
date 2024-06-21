@@ -2,7 +2,7 @@ import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
 import { BoundaryShape, Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
-import {useRef} from "react";
+import {ReactNode, useRef} from "react";
 import {Vector} from "p5";
 
 interface P5CanvasProps {
@@ -22,6 +22,7 @@ interface P5CanvasProps {
 
     // Additional props
     className?: string;
+    children?: ReactNode;
 }
 let rerenders = 0;
 export default function P5Canvas(props: P5CanvasProps) {
@@ -183,6 +184,7 @@ export default function P5Canvas(props: P5CanvasProps) {
     return (
         <div className={props.className}>
             <ReactP5Wrapper sketch={sketch} />
+            {props.children}
         </div>
     );
 }
