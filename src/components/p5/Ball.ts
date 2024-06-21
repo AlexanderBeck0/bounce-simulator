@@ -55,7 +55,7 @@ export default class Ball {
      */
     public applyForce(force: Force): void {
         if (force.enabled) {
-            const forceValue: Vector = typeof force.value === "function" ? force.value(this.size) : force.value;
+            const forceValue: Vector = typeof force.value === "function" ? force.value(this.p5, this.size) : force.value;
             this.acceleration.add(forceValue);
         }
     }

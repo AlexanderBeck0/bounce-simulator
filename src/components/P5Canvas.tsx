@@ -1,9 +1,9 @@
 import { ReactP5Wrapper, Sketch } from "@p5-wrapper/react";
+import { Vector } from "p5";
+import { ReactNode, useRef } from "react";
 import { BoundaryShape, Force, Shape } from "../App";
 import Ball from "./p5/Ball";
 import Boundary from "./p5/Boundary";
-import {ReactNode, useRef} from "react";
-import {Vector} from "p5";
 
 interface P5CanvasProps {
     addForce: (force: Force) => void;
@@ -36,28 +36,7 @@ export default function P5Canvas(props: P5CanvasProps) {
         /**
          * @tutorial force To add a new force, simply add a new object with the name, value, and enabled fields.
          */
-        let forces: Force[] = [
-            {
-                name: "Gravity",
-                value: (size: number) => p5.createVector(0, 0.1 * size),
-                enabled: true
-            },
-            {
-                name: "Anti-Gravity",
-                value: (size: number) => p5.createVector(0, -0.1 * size),
-                enabled: false
-            },
-            {
-                name: "Right Force",
-                value: (size: number) => p5.createVector(0.1 * size, 0),
-                enabled: false
-            },
-            {
-                name: "Left Force",
-                value: (size: number) => p5.createVector(-0.1 * size, 0),
-                enabled: false
-            },
-        ];
+        let forces: Force[] = [];
         if (props.forces.length > 0) forces = props.forces;
         else forces.forEach(props.addForce);
 
@@ -103,7 +82,7 @@ export default function P5Canvas(props: P5CanvasProps) {
             // const edges = boundary.createBoundary(props.segments);
             const edges = boundaryRef.current!.createBoundary(props.segments);
 
-            if (isDrawingBoundary && boundaryRef.current && lastVertex){
+            if (isDrawingBoundary && boundaryRef.current && lastVertex) {
                 boundaryRef.current.addVertexToDrawnBoundary(lastVertex)
             }
 
@@ -124,7 +103,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                     const y = p5.mouseY - p5.height / 2
                     props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)))
                 }
-                else if(props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled){
+                else if (props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled) {
                     isDrawingBoundary = true
                     boundaryRef.current!.clearDrawnBoundary()
                     const x = p5.mouseX - p5.width / 2
@@ -142,7 +121,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled) {
                 //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
                 // }
-                if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height){
+                if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
                     lastVertex = p5.createVector(x, y)

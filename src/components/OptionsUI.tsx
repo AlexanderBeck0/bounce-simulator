@@ -1,7 +1,8 @@
 import { JSX } from "react/jsx-runtime";
 import { BoundaryShape, Force, Shape } from "../App";
 import CheckboxList from "./UI/CheckboxList";
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
+import { P5CanvasInstance } from "@p5-wrapper/react";
 
 interface OptionsUIProps {
     changeShape: (newShape: BoundaryShape) => void;
@@ -14,6 +15,7 @@ interface OptionsUIProps {
     changeBallDropping: (enabled: boolean) => void
     clearBalls: () => void;
     removeForce: (name: string) => void;
+    addForce: (force: Force) => void;
     shapes: Shape[];
     boundaryShapes: BoundaryShape[]
     currentShape?: BoundaryShape;
@@ -35,11 +37,140 @@ function dummyHandler(isChecked: boolean): void {
 }
 export default function OptionsUI(props: OptionsUIProps): JSX.Element {
     const [isNewForceUIOpened, setIsNewForceUIOpened] = useState<boolean>(false);
+    /**
+     * First element: Force Name
+     * Second element: Force X-Axis
+     * Third element: Force Y-Axis
+     */
+    const [addForceValues, setAddForceValues] = useState<(string | number)[]>([]);
+    const addForceNameRef = useRef(null);
+    const addForceXRef = useRef(null);
+    const addForceYRef = useRef(null);
     function toggleIsNewForceUIOpened(): void {
         setIsNewForceUIOpened(!isNewForceUIOpened);
     }
 
-    function forceMinimumOfZero(inputChangeEvent: React.ChangeEvent<HTMLInputElement>) {
+    /**
+     * Toggles the Add Force dropdown and adds the force if all the forces are valid, or calls {@link handleInvalidAddForceValues()} 
+     */
+    function addForceOrToggleDropdownUI(): void {
+        if (!isNewForceUIOpened) {
+            toggleIsNewForceUIOpened();
+            return;
+        }
+
+        const invalidAddForceValues = getInvalidAddForceIndexes();
+        if (invalidAddForceValues.length > 0) {
+            handleInvalidAddForceValues(invalidAddForceValues);
+            return;
+        }
+
+        removeAllErrorsInAddForce();
+        toggleIsNewForceUIOpened();
+        const newForce: Force = {
+            name: addForceValues[0].toString(),
+            value: (p5Reference: P5CanvasInstance, size: number) => p5Reference.createVector(size * +addForceValues[1], size * +addForceValues[2]),
+            enabled: true
+        };
+        props.addForce(newForce);
+        setAddForceValues([]);
+    }
+
+    /**
+     * Gets all the invalid option vertices from {@link addForceValues}. 
+     * - Name must be alphanumeric, not undefined, and not in {@link props.forces forces[].name}.
+     * - X must be a number, not undefined, and greater than or equal to -2
+     * - Y must be a number, not undefined, and greater than or equal to -2
+     * @returns {number[]} An array of indexes representing the invalid options in {@link addForceValues}. Empty if there are no issues
+     */
+    function getInvalidAddForceIndexes(): number[] {
+        const invalidForceIndexes: number[] = [];
+        const name = addForceValues[0];
+        const x = +addForceValues[1];
+        const y = +addForceValues[2];
+        let isValidName = typeof name === "string";
+        let isValidX = typeof x === "number";
+        let isValidY = typeof y === "number";
+
+        if (!name) isValidName = false;
+        // Check if name is alphanumeric
+        // Allows a-z, A-Z, 0-9, _, -, comma, ., !, ?, and spaces
+        if (isValidName && !name.toString().match(/^[a-zA-Z0-9_\-&,.!?\s]*$/)) isValidName = false;
+        // Check if name already exists
+        if (isValidName && props.forces.map(force => force.name).includes(name.toString())) isValidName = false;
+
+        // Check for valid x's
+        if (!x && x !== 0) isValidX = false;
+        if (isValidX && isNaN(x)) isValidX = false;
+        if (isValidX && x < -2) isValidX = false;
+
+        // Check for valid y's
+        if (!y && y !== 0) isValidY = false;
+        if (isValidY && isNaN(y)) isValidY = false;
+        if (isValidY && y < -2) isValidY = false;
+
+        if (!isValidName) invalidForceIndexes.push(0);
+        if (!isValidX) invalidForceIndexes.push(1);
+        if (!isValidY) invalidForceIndexes.push(2);
+        return invalidForceIndexes;
+    }
+
+    function handleInvalidAddForceValues(invalidForceIndexes: number[]): void {
+        if (!invalidForceIndexes || invalidForceIndexes.length === 0) return;
+        // Make the element red
+        const indexes = [addForceNameRef, addForceXRef, addForceYRef];
+        for (const invalidForceIndex of invalidForceIndexes) {
+            const input = indexes[invalidForceIndex].current as HTMLInputElement | null;
+            if (input) {
+                input.classList.add("border-error");
+            }
+        }
+    }
+
+    /**
+     * Removes `border-error` from the className list of {@link addForceNameRef}, {@link addForceXRef}, and {@link addForceYRef}
+     */
+    function removeAllErrorsInAddForce(): void {
+        const indexes = [addForceNameRef, addForceXRef, addForceYRef];
+        for (const input of indexes) {
+            const inputElement = input.current as HTMLInputElement | null;
+            if (inputElement) {
+                inputElement.classList.remove("border-error");
+            }
+        }
+    }
+
+    /**
+     * Adds `newForceName` to `forceValues[0] = newForceName`
+     * @param newForceName The new force name
+     */
+    function forceNameChangeHandler(newForceName: string): void {
+        const forceValues: (string | number)[] = addForceValues;
+        addForceValues.length > 0 ? forceValues[0] = newForceName : forceValues.push(newForceName);
+        setAddForceValues(forceValues);
+    }
+
+    /**
+     * Adds `newForceXAxis` to `forceValues[1]`
+     * @param newForceXAxis The new force x axis.
+     */
+    function forceXAxisChangeHandler(newForceXAxis: number): void {
+        const forceValues: (string | number)[] = addForceValues;
+        forceValues[1] = newForceXAxis
+        setAddForceValues(forceValues);
+    }
+
+    /**
+     * Adds `newForceYAxis` to `forceValues[2]`
+     * @param newForceYAxis The new force y axis.
+     */
+    function forceYAxisChangeHandler(newForceYAxis: number): void {
+        const forceValues: (string | number)[] = addForceValues;
+        forceValues[2] = newForceYAxis;
+        setAddForceValues(forceValues);
+    }
+
+    function forceMinimumOfZero(inputChangeEvent: React.ChangeEvent<HTMLInputElement>): void {
         if (inputChangeEvent.currentTarget.valueAsNumber.toString() !== inputChangeEvent.currentTarget.value) {
             inputChangeEvent.currentTarget.value = inputChangeEvent.currentTarget.valueAsNumber.toString();
         }
@@ -146,26 +277,35 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                 <div className="flex-initial flex-nowrap">
                     <CheckboxList title="Open Forces" openTitle="Close Forces" checkboxes={props.forces} onCheckboxChange={handleCheckboxChange} removeCheckbox={props.removeForce}>
                         <div className="flex flex-row items-end space-x-1">
-                            <div className={`flex flex-col basis-1/4 ${isNewForceUIOpened ? "visible" : "hidden"}`}>
-                                <div className="label">
-                                    <span className="label-text">Force Name</span>
+                            {isNewForceUIOpened && (
+                                <div className="flex flex-col basis-1/4">
+                                    <div className="label">
+                                        <span className="label-text">Force Name</span>
+                                    </div>
+                                    <input type="text" ref={addForceNameRef} className="input input-bordered w-full"
+                                        onChange={(val) => forceNameChangeHandler(val.currentTarget.value)} autoComplete="off" />
                                 </div>
-                                <input type="text" className="input input-bordered w-full" autoComplete="off" />
-                            </div>
-                            <div className={`flex flex-col basis-1/4 ${isNewForceUIOpened ? "visible" : "hidden"}`}>
-                                <div className="label">
-                                    <span className="label-text">Force on X-Axis</span>
+                            )}
+                            {isNewForceUIOpened && (
+                                <div className="flex flex-col basis-1/4">
+                                    <div className="label">
+                                        <span className="label-text">Force on X-Axis</span>
+                                    </div>
+                                    <input type="number" ref={addForceXRef} min={-2} className="input input-bordered w-full" autoComplete="off"
+                                        onChange={(val) => forceXAxisChangeHandler(val.currentTarget.valueAsNumber)} />
                                 </div>
-                                <input type="number" min={-2} className="input input-bordered w-full" autoComplete="off" />
-                            </div>
-                            <div className={`flex flex-col basis-1/4 ${isNewForceUIOpened ? "visible" : "hidden"}`}>
-                                <div className="label">
-                                    <span className="label-text">Force on Y-Axis</span>
+                            )}
+                            {isNewForceUIOpened && (
+                                <div className="flex flex-col basis-1/4">
+                                    <div className="label">
+                                        <span className="label-text">Force on Y-Axis</span>
+                                    </div>
+                                    <input type="number" ref={addForceYRef} min={-2} className="input input-bordered w-full" autoComplete="off"
+                                        onChange={(val) => forceYAxisChangeHandler(val.currentTarget.valueAsNumber)} />
                                 </div>
-                                <input type="number" min={-2} className="input input-bordered w-full" autoComplete="off" />
-                            </div>
+                            )}
                             <div className={`${isNewForceUIOpened ? "basis-1/4" : "basis-full"}`}>
-                                <button className={`btn border-neutral w-full h-full`} onClick={toggleIsNewForceUIOpened}>Add a new force</button>
+                                <button className={`btn border-neutral w-full h-full`} onClick={addForceOrToggleDropdownUI}>Add a new force</button>
                             </div>
                         </div>
                     </CheckboxList>
