@@ -51,13 +51,12 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         props.forces.find(changedForce => changedForce.name === force)!.enabled = checked;
     }
 
-    // TODO: Disable autofill
     return (
         <div className={props.className}>
             <div className="flex flex-col max-w-2xl">
                 <div className="flex flex-nowrap items-center mb-1">
                     <div className="flex space-x-1">
-                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
+                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
                             <div className="label">
                                 <span className="label-text">Boundary Shape</span>
                             </div>
@@ -70,7 +69,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 })}
                             </select>
                         </div>
-                        <div className={`flex flex-col flex-initial basis-1/5 ${props.currentShape === "Circle" ? "visible" : "hidden"}`}>
+                        <div className={`flex flex-col flex-initial basis-1/4 ${props.currentShape === "Circle" ? "visible" : "hidden"}`}>
                             <div className="label">
                                 <span className="label-text">Segments</span>
                             </div>
@@ -80,9 +79,10 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 onChange={(val) => {
                                     forceMinimumOfZero(val);
                                     props.changeSegments(val.currentTarget.valueAsNumber);
-                                }} />
+                                }}
+                                autoComplete="off" />
                         </div>
-                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
+                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
                             <div className="label">
                                 <span className="label-text">Ball Shape</span>
                             </div>
@@ -96,7 +96,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 })}
                             </select>
                         </div>
-                        <div className={`flex flex-col flex-1 ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/4"}`}>
+                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
                             <div className="label">
                                 <span className="label-text">Number of balls</span>
                             </div>
@@ -106,24 +106,28 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 onChange={(val) => {
                                     forceMinimumOfZero(val);
                                     props.changeBallCount(val.currentTarget.valueAsNumber)
-                                }} />
+                                }}
+                                autoComplete="off" />
                         </div>
                     </div>
                 </div>
                 <div className="flex flex-row flex-nowrap space-x-1">
-                    <div className="flex flex-col w-1/2">
-                        <div className="label">
-                            <span className="label-text">Size of Boundary</span>
+                    {props.currentShape && props.currentShape !== "Draw" && (
+                        <div className="flex flex-col w-1/2">
+                            <div className="label">
+                                <span className="label-text">Size of Boundary</span>
+                            </div>
+                            <input type="number" placeholder="Size of boundary"
+                                className="input input-bordered"
+                                value={props.currentBoundarySize} min={0}
+                                onChange={(val) => {
+                                    // Enforce the minimum being 0
+                                    forceMinimumOfZero(val);
+                                    props.changeBoundarySize(val.currentTarget.valueAsNumber);
+                                }}
+                                autoComplete="off" />
                         </div>
-                        <input type="number" placeholder="Size of boundary"
-                            className="input input-bordered"
-                            value={props.currentBoundarySize} min={0}
-                            onChange={(val) => {
-                                // Enforce the minimum being 0
-                                forceMinimumOfZero(val);
-                                props.changeBoundarySize(val.currentTarget.valueAsNumber);
-                            }} />
-                    </div>
+                    )}
                     <div className="flex flex-col w-1/2">
                         <div className="label">
                             <span className="label-text">Size of balls</span>
@@ -134,7 +138,8 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                             onChange={(val) => {
                                 forceMinimumOfZero(val);
                                 props.changeBallSize(val.currentTarget.valueAsNumber)
-                            }} />
+                            }}
+                            autoComplete="off" />
                     </div>
                 </div>
                 <div className="flex-initial flex-nowrap">
@@ -144,19 +149,19 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                                 <div className="label">
                                     <span className="label-text">Force Name</span>
                                 </div>
-                                <input type="text" className="input input-bordered w-full" />
+                                <input type="text" className="input input-bordered w-full" autoComplete="off" />
                             </div>
                             <div className={`flex flex-col basis-1/4 ${isNewForceUIOpened ? "visible" : "hidden"}`}>
                                 <div className="label">
                                     <span className="label-text">Force on X-Axis</span>
                                 </div>
-                                <input type="number" min={-2} className="input input-bordered w-full" />
+                                <input type="number" min={-2} className="input input-bordered w-full" autoComplete="off" />
                             </div>
                             <div className={`flex flex-col basis-1/4 ${isNewForceUIOpened ? "visible" : "hidden"}`}>
                                 <div className="label">
                                     <span className="label-text">Force on Y-Axis</span>
                                 </div>
-                                <input type="number" min={-2} className="input input-bordered w-full" />
+                                <input type="number" min={-2} className="input input-bordered w-full" autoComplete="off" />
                             </div>
                             <div className={`${isNewForceUIOpened ? "basis-1/4" : "basis-full"}`}>
                                 <button className={`btn border-neutral w-full h-full`} onClick={toggleIsNewForceUIOpened}>Add a new force</button>
