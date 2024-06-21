@@ -11,6 +11,7 @@ interface OptionsUIProps {
     changeBoundarySize: (newSize: number) => void;
     changeSegments: (newCount: number) => void;
     changeRayCasting: (enabled: boolean) => void;
+    changeBallDropping: (enabled: boolean) => void
     clearBalls: () => void;
     removeForce: (name: string) => void;
     shapes: Shape[];
@@ -22,6 +23,7 @@ interface OptionsUIProps {
     currentBoundarySize?: number;
     segments?: number;
     isRaycastingEnabled?: boolean;
+    isBallDroppingEnabled: boolean
     forces: Force[];
 
     // Additional props
@@ -172,10 +174,10 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                             checked={props.isRaycastingEnabled}
                             onChange={val => props.changeRayCasting(val.currentTarget.checked)} />
                     </label>
-                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
-                        <span className="label-text">DUMMY OPTION</span>
+                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                        <span className="label-text">Drop Balls on Click</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
-                            onChange={val => dummyHandler(val.currentTarget.checked)} />
+                            onChange={val => props.changeBallDropping(val.currentTarget.checked)} />
                     </label>
                     <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
                         <span className="label-text">DUMMY OPTION</span>
