@@ -128,7 +128,6 @@ export default function App() {
 			</div>
 			<div className="mt-2 flex items-center justify-center">
 				<P5Canvas
-					// changeForces={setForces}
 					addForce={addForce}
 					addBall={addBall}
 					removeBalls={removeBalls}

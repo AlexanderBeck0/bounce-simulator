@@ -32,25 +32,20 @@ export default function P5Canvas(props: P5CanvasProps) {
         let isDrawingBoundary = false
         let lastVertex: Vector | undefined
         console.log(rerenders++)
-        // let boundary: Boundary;
         /**
          * @tutorial force To add a new force, simply add a new object with the name, value, and enabled fields.
          */
         let forces: Force[] = [];
         if (props.forces.length > 0) forces = props.forces;
-        // else forces.forEach(props.addForce);
 
         p5.setup = () => {
             const canvas = p5.createCanvas(600, 400, p5.WEBGL);
-            // boundary = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             // Note: This is broken. Changing anything with the same shape hides the shape
             // if (!boundaryRef.current || props.shape !== boundaryRef.current.shape) {
             //     boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             // }
-            props.balls.forEach(ball => {
-                ball.display();
-            })
+            
 
             canvas.elt.addEventListener("contextmenu", (e: MouseEvent) => e.preventDefault())
         }
@@ -82,11 +77,19 @@ export default function P5Canvas(props: P5CanvasProps) {
             if (isDrawingBoundary && boundaryRef.current && lastVertex) {
                 boundaryRef.current.addVertexToDrawnBoundary(lastVertex)
             }
-
             props.balls.forEach((ball, index) => {
                 ball.applyForces(forces);
                 ball.update(edges, props.isRaycastingEnabled);
-                ball.display();
+                p5.noStroke();
+                p5.fill(0);
+                p5.push();
+                p5.beginShape();
+                const verts = ball.drawer.calculateVertices(ball.shape, ball.position, ball.size, 30);
+                for (const v of verts) {
+                    p5.vertex(v.x, v.y);
+                }
+                p5.endShape(p5.CLOSE);
+                p5.pop();
                 ball.checkSiblingCollision(props.balls, boundaryRef.current!, props.isCollisionRaysEnabled);
 
                 // Remove any balls that go off screen
@@ -99,7 +102,6 @@ export default function P5Canvas(props: P5CanvasProps) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
                     props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)).setIsUserDropped(true))
-                    console.log(props.balls)
                 }
                 else if (props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled) {
                     isDrawingBoundary = true
@@ -133,23 +135,6 @@ export default function P5Canvas(props: P5CanvasProps) {
                     props.addBall(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)).setIsUserDropped(true))
                 }
             }
-
-            // TODO List:
-            // - Add collisions between balls: A
-            //  - Make it so collisions do not force other balls out
-            // - Make immovable balls (possibly on timer): A
-            // - DONE: Add a "random" boundary shape: S
-
-            // - DONE: Allow user to set start drop position: S
-            // - Allow user to add their own forces?: A
-
-
-            // Must add
-            // - Allow user to draw own boundary: S (attempt)
-
-            // UI things
-            // - DONE: Allow user to change size of boundary/ball: A
-            // - DONE: If boundary is circle, let user change the number of segments: A
         }
 
 

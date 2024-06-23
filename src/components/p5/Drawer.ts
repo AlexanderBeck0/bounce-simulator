@@ -63,16 +63,17 @@ export default class Drawer {
      * @param size The radius of the circle
      * @param segments The number of segments for the circle. Defaults at 30. Note: The greater this value, the more resource intensive it is.
      */
-    private drawCircle(position: Vector, size: number, segments?: number): Vector[] {
-        const circleVertices = this.calculateVertices("Circle", position, size, segments);
+    public drawCircle(position: Vector, size: number, segments?: number): Vector[] {
+        const vertices = this.calculateVertices("Circle", position, size, segments);
         this.p5.push();
+        this.p5.stroke(0);
         this.p5.beginShape();
-        for (let i = 0; i < circleVertices.length; i++) {
-            this.p5.vertex(circleVertices[i].x, circleVertices[i].y);
+        for (const v of vertices) {
+            this.p5.vertex(v.x, v.y);
         }
         this.p5.endShape(this.p5.CLOSE);
         this.p5.pop();
-        return circleVertices;
+        return vertices;
     }
 
     private drawTriangle(position: Vector, size: number): Vector[] {
@@ -143,7 +144,7 @@ export default class Drawer {
      * @param segments The number of segments for the circle. Defaults at 30. Note: The greater this value, the more resource intensive it is.
      * @returns An array of Vectors representing the Vertexs of the circle
      */
-    private calculateCircleVertices(position: Vector, radius: number, segments: number) {
+    public calculateCircleVertices(position: Vector, radius: number, segments: number) {
         const vertices = [];
         for (let i = 0; i < segments; i++) {
             const angle = this.p5.map(i, 0, segments, 0, this.p5.TWO_PI);

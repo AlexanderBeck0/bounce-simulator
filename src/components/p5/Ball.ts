@@ -18,7 +18,7 @@ export default class Ball {
     public velocity: Vector;
     public maxVelocity: Vector;
     public acceleration: Vector;
-    private drawer: Drawer;
+    public drawer: Drawer;
     public rayColor: Color;
     public isUserDropped: boolean;
     // #endregion
@@ -55,11 +55,9 @@ export default class Ball {
     }
 
     public display(): void {
-        this.p5.push();
         this.p5.noStroke();
         this.p5.fill(0);
         this.drawer.draw(this.shape, this.position, this.size);
-        this.p5.pop();
     }
 
     // #region Movement
@@ -104,7 +102,7 @@ export default class Ball {
         }
 
         Vector.div(this.velocity, steps, step);
-
+        
         for (let i = 0; i < steps; i++) {
             const nextPos = Vector.add(this.position, step);
             const collision = this.collides(nextPos, edges, enableRaycasting);
@@ -124,7 +122,7 @@ export default class Ball {
         }
         // Make balls that have not moved not gain more velocity
         // This helps the case where a ball is stuck in a wall and is constantly increasing velocity
-        if (this.position.equals(prevPosition)) {
+        if (this.position.equals(prevPosition) && this.velocity.equals(prevVelocity)) {
             this.velocity.sub(this.acceleration);
         }
 
