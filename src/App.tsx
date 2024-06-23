@@ -25,6 +25,7 @@ export default function App() {
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 	const [segments, setSegments] = useState<number>(30);
 	const [isRaycastingEnabled, setIsRaycastingEnabled] = useState<boolean>(false);
+	const [isCollisionRaysEnabled, setIsCollisionRaysEnabled] = useState<boolean>(false);
 	const [isBallDroppingEnabled, setIsBallDroppingEnabled] = useState<boolean>(false)
 	const ballsRef = useRef<Ball[]>([]);
 	// const collisionsRef = useRef<boolean[]>([true, true]);
@@ -85,7 +86,46 @@ export default function App() {
 	 */
 	function addBall(ball: Ball) {
 		ballsRef.current.push(ball);
+		// if (ball.isUserDropped) setNumberOfUserDropped(numberOfUserDropped + 1);
 	}
+
+	// /**
+	//  * Removes all the computer dropped balls. Determined using {@link Ball.isUserDropped}
+	//  * @param count The number of computer dropped balls to remove
+	//  */
+	// function removeComputerDroppedBalls(count: number): void {
+	// 	let removeCount = count;
+	// 	console.log("Remove count: ", removeCount);
+	// 	console.log("Before removal: ", ballsRef.current);
+	// 	ballsRef.current = ballsRef.current.filter(ball => {
+	// 		if (!ball.isUserDropped && removeCount > 0) {
+	// 			removeCount--;
+	// 			return false;
+	// 		}
+	// 		return true;
+	// 	});
+	// 	console.log("After removal: ", ballsRef.current);
+	// }
+
+	// /**
+	//  * @returns The number of balls to add
+	//  */
+	// function removeComputerDroppedOrGetNumOfBallsToAdd(): number {
+	// 	// Update numberOfUserDropped
+	// 	const userDropCount = ballsRef.current.filter(ball => ball.isUserDropped).length;
+	// 	console.log("User drop count: ", userDropCount);
+	// 	const computerDroppedCount = ballsRef.current.length - userDropCount;
+	// 	console.log("Computer drop count: ", computerDroppedCount)
+	// 	if (computerDroppedCount > currentBallCount) {
+	// 		removeComputerDroppedBalls(computerDroppedCount - currentBallCount);
+	// 		return 0;
+	// 	} else if (computerDroppedCount < currentBallCount) {
+	// 		const addCount = currentBallCount - computerDroppedCount;
+	// 		console.log("Add count: ", addCount);
+	// 		return addCount;
+	// 	}
+	// 	return 0;
+	// }
 
 	/**
 	 * Removes balls from {@link ballsRef}
@@ -101,6 +141,7 @@ export default function App() {
 	 */
 	function clearBalls() {
 		removeBalls(0, ballsRef.current.length);
+		setCurrentBallCount(0);
 	}
 
 	return (
@@ -113,6 +154,7 @@ export default function App() {
 					changeBoundarySize={setCurrentBoundarySize}
 					changeSegments={setSegments}
 					changeRayCasting={setIsRaycastingEnabled}
+					changeCollisionRays={setIsCollisionRaysEnabled}
 					changeBallDropping={setIsBallDroppingEnabled}
 					clearBalls={clearBalls}
 					removeForce={removeForce}
@@ -126,6 +168,7 @@ export default function App() {
 					currentBoundarySize={currentBoundarySize}
 					segments={segments}
 					isRaycastingEnabled={isRaycastingEnabled}
+					isCollisionRaysEnabled={isCollisionRaysEnabled}
 					isBallDroppingEnabled={isBallDroppingEnabled}
 					forces={forcesRef.current}
 				/>
@@ -136,6 +179,7 @@ export default function App() {
 					addForce={addForce}
 					addBall={addBall}
 					removeBalls={removeBalls}
+					// addOrRemoveBalls={removeComputerDroppedOrGetNumOfBallsToAdd}
 					balls={ballsRef.current}
 					shape={currentShape}
 					segments={segments}
@@ -144,6 +188,7 @@ export default function App() {
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
 					isRaycastingEnabled={isRaycastingEnabled}
+					isCollisionRaysEnabled={isCollisionRaysEnabled}
 					isBallDroppingEnabled={isBallDroppingEnabled}
 					forces={forcesRef.current}
 				/>

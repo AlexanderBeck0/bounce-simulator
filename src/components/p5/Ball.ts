@@ -6,19 +6,21 @@ import Boundary from "./Boundary.ts";
 export default class Ball {
     // #region Variables
     p5: P5CanvasInstance;
-    shape: Shape;
+    public shape: Shape;
     /**
      * Defaults to 5
      */
-    size: number;
+    public size: number;
     /**
      * Defaults to this.p5.width / 2, this.p5.height / 2
      */
-    position: Vector;
-    velocity: Vector;
-    acceleration: Vector;
-    drawer: Drawer;
-    rayColor: Color;
+    public position: Vector;
+    public velocity: Vector;
+    public maxVelocity: Vector;
+    public acceleration: Vector;
+    private drawer: Drawer;
+    public rayColor: Color;
+    public isUserDropped: boolean;
     // #endregion
     /**
      * The constructor for creating a ball. Initializes acceleration and velocity to 0
@@ -37,9 +39,19 @@ export default class Ball {
 
         this.acceleration = this.p5.createVector(0, 0);
         this.velocity = this.p5.createVector(0, 0);
+        this.maxVelocity = this.p5.createVector(0, 0);
 
         this.drawer = new Drawer(this.p5);
         this.rayColor = color || this.p5.color(this.p5.random(255), this.p5.random(255), this.p5.random(255));
+        this.isUserDropped = false;
+    }
+
+    /**
+     * @param isUserDropped A boolean representing if the user dropped the ball
+     */
+    public setIsUserDropped(isUserDropped: boolean): Ball {
+        this.isUserDropped = isUserDropped;
+        return this;
     }
 
     public display(): void {
@@ -73,12 +85,19 @@ export default class Ball {
      * Updates the ball's {@link velocity}, {@link position}, and sets its {@link acceleration} to 0
      */
     public update(edges: Vector[], enableRaycasting: boolean): void {
+        const prevPosition = this.position.copy();
+        const prevVelocity = this.velocity.copy();
         this.velocity.add(this.acceleration);
+        // Used to reduce the number of calls to this.velocity.mag()
+        const velocityMagnitude = this.velocity.mag();
+
         // Use steps instead of checking their positions directly to remove the change that a fast enough ball goes flying through the boundary
-        const steps = Math.ceil(this.velocity.mag());
+        const steps = Math.ceil(velocityMagnitude);
         const step = this.p5.createVector();
+
         // If the velocity is 0, just leave it in place
-        if (this.velocity.equals(0, 0)) {
+        if (velocityMagnitude === 0) {
+            this.acceleration.mult(0);
             return;
         }
 
@@ -90,11 +109,29 @@ export default class Ball {
             if (collision) {
                 const normal = collision.normal;
                 this.velocity.reflect(normal);
+                // Used to reduce the number of calls to prevVelocity.mag()
+                const previousVelocityMag = prevVelocity.mag();
+                // Ensure there is no energy gain on bounce
+                if (this.velocity.mag() > previousVelocityMag) {
+                    this.velocity.setMag(previousVelocityMag);
+                }
                 break;
             } else {
                 this.position.add(step);
             }
         }
+        // Make balls that have not moved not gain more velocity
+        // This helps the case where a ball is stuck in a wall and is constantly increasing velocity
+        if (this.position.equals(prevPosition)) {
+            this.velocity.sub(this.acceleration);
+        }
+
+        // Update the max velocity
+        if (this.maxVelocity.mag() < this.velocity.mag()) {
+            this.maxVelocity = this.velocity.copy();
+            console.log(this.maxVelocity.mag())
+        }
+
         this.acceleration.mult(0);
     }
 
@@ -104,7 +141,7 @@ export default class Ball {
             const collision = this.edgeIntersectsPoint(vertices[i], vertices[j], nextPosition, this.size, enableRaycasting);
             if (collision) {
                 const edge = Vector.sub(vertices[j], vertices[i]);
-                const normal = this.p5.createVector(-edge.y, edge.x).normalize();
+                const normal = this.p5.createVector(-edge.y, -edge.x).normalize();
                 return { collided: true, normal: normal };
             }
         }
@@ -129,11 +166,7 @@ export default class Ball {
         // Clamp projection to be on the edge
         projection = this.p5.constrain(projection, 0, 1);
 
-        /*const closest = this.p5.createVector();
-        Vector.mult(line, projection, closest);
-        const closestToPoint = Vector.add(edgeStart, closest);*/
         const closest = line.copy().mult(projection).add(edgeStart);
-        // const distance = Vector.dist(point, closestToPoint);
         const distance = Vector.dist(point, closest);
 
         // Note: This is SUPER laggy (did not realize when I wrote this because I was not on my laptop)
@@ -142,8 +175,6 @@ export default class Ball {
             this.p5.fill(this.rayColor);
             this.p5.stroke(this.rayColor);
             this.p5.strokeWeight(Math.floor(this.size / 4));
-            /*this.p5.circle(closestToPoint.x, closestToPoint.y, this.size);
-            this.p5.line(closestToPoint.x, closestToPoint.y, point.x, point.y);*/
             this.p5.circle(closest.x, closest.y, this.size);
             this.p5.line(closest.x, closest.y, point.x, point.y);
             this.p5.pop();
@@ -152,7 +183,7 @@ export default class Ball {
         return distance <= radius;
     }
 
-    public checkSiblingCollision(balls: Ball[], boundary: Boundary) {
+    public checkSiblingCollision(balls: Ball[], boundary: Boundary, isCollisionRaysEnabled: boolean) {
         // Get siblings within a certain radius of this ball (to improve performance)
         // For now, get all balls (will improve performance later)
         // https://www.gorillasun.de/blog/an-algorithm-for-particle-systems-with-collisions/
@@ -161,13 +192,25 @@ export default class Ball {
             const distance = this.position.dist(ball.position);
             const sizeDistance = ball.size + this.size;
 
+            if (isCollisionRaysEnabled) {
+                this.p5.push();
+                this.p5.stroke(this.rayColor);
+                this.p5.strokeWeight(Math.floor(this.size / 4));
+                this.p5.line(ball.position.x, ball.position.y, this.position.x, this.position.y);
+                this.p5.pop();
+            }
+
+
             if (distance <= sizeDistance) {
                 const normal = Vector.sub(ball.position, this.position).normalize();
                 const velocity = Vector.sub(ball.velocity, this.velocity);
-                const dot = Vector.dot(velocity, normal);
+                const velocityOnNormal = Vector.dot(velocity, normal);
+
+                // Balls are not going in the same direction, no need to compute further
+                if (velocityOnNormal > 0) continue;
 
                 const impulse = this.p5.createVector();
-                Vector.mult(normal, 2 * dot / (ball.size + this.size), impulse);
+                Vector.mult(normal, 2 * velocityOnNormal / (ball.size + this.size), impulse);
 
                 const bounce = this.p5.createVector();
                 Vector.mult(normal, sizeDistance - distance, bounce);
@@ -184,20 +227,20 @@ export default class Ball {
                 const adjustedBallPosition = this.p5.createVector();
                 Vector.div(bounce, ball.size, adjustedBallPosition);
 
-                if (boundary.isPointInside(this.position.x + adjustedPosition.x, this.position.y + adjustedPosition.y)){
+                if (boundary.isPointInside(this.position.x + adjustedPosition.x, this.position.y + adjustedPosition.y)) {
                     this.velocity.add(adjustedVelocity);
                     this.position.sub(adjustedPosition);
                 }
-                else{
+                else {
                     this.velocity.sub(adjustedVelocity);
                     this.position.add(adjustedPosition);
                 }
 
-                if (boundary.isPointInside(ball.position.x + adjustedBallPosition.x, ball.position.y + adjustedBallPosition.y)){
+                if (boundary.isPointInside(ball.position.x + adjustedBallPosition.x, ball.position.y + adjustedBallPosition.y)) {
                     ball.velocity.sub(adjustedBallVelocity);
                     ball.position.add(adjustedBallPosition);
                 }
-                else{
+                else {
                     ball.velocity.add(adjustedBallVelocity);
                     ball.position.sub(adjustedBallPosition);
                 }
