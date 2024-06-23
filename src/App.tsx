@@ -20,7 +20,6 @@ export type Force = {
 export default function App() {
 	const [currentShape, setCurrentShape] = useState<Shape>("Square");
 	const [currentBallShape, setCurrentBallShape] = useState<Shape>("Circle");
-	const [currentBallCount, setCurrentBallCount] = useState<number>(0);
 	const [currentBallSize, setCurrentBallSize] = useState<number>(5);
 	const [currentBoundarySize, setCurrentBoundarySize] = useState<number>(100);
 	const [segments, setSegments] = useState<number>(30);
@@ -28,7 +27,6 @@ export default function App() {
 	const [isCollisionRaysEnabled, setIsCollisionRaysEnabled] = useState<boolean>(false);
 	const [isBallDroppingEnabled, setIsBallDroppingEnabled] = useState<boolean>(false)
 	const ballsRef = useRef<Ball[]>([]);
-	// const collisionsRef = useRef<boolean[]>([true, true]);
 	const forcesRef = useRef<Force[]>([
 		{
 			name: "Gravity",
@@ -76,64 +74,22 @@ export default function App() {
 		}
 	}
 
-	// function addCollision(collisionIndex: number) {
-	// 	throw "not finished"
-	// }
-
 	/**
 	 * Adds a ball to {@link ballsRef}
 	 * @param ball The ball to add
 	 */
 	function addBall(ball: Ball) {
 		ballsRef.current.push(ball);
-		// if (ball.isUserDropped) setNumberOfUserDropped(numberOfUserDropped + 1);
 	}
-
-	// /**
-	//  * Removes all the computer dropped balls. Determined using {@link Ball.isUserDropped}
-	//  * @param count The number of computer dropped balls to remove
-	//  */
-	// function removeComputerDroppedBalls(count: number): void {
-	// 	let removeCount = count;
-	// 	console.log("Remove count: ", removeCount);
-	// 	console.log("Before removal: ", ballsRef.current);
-	// 	ballsRef.current = ballsRef.current.filter(ball => {
-	// 		if (!ball.isUserDropped && removeCount > 0) {
-	// 			removeCount--;
-	// 			return false;
-	// 		}
-	// 		return true;
-	// 	});
-	// 	console.log("After removal: ", ballsRef.current);
-	// }
-
-	// /**
-	//  * @returns The number of balls to add
-	//  */
-	// function removeComputerDroppedOrGetNumOfBallsToAdd(): number {
-	// 	// Update numberOfUserDropped
-	// 	const userDropCount = ballsRef.current.filter(ball => ball.isUserDropped).length;
-	// 	console.log("User drop count: ", userDropCount);
-	// 	const computerDroppedCount = ballsRef.current.length - userDropCount;
-	// 	console.log("Computer drop count: ", computerDroppedCount)
-	// 	if (computerDroppedCount > currentBallCount) {
-	// 		removeComputerDroppedBalls(computerDroppedCount - currentBallCount);
-	// 		return 0;
-	// 	} else if (computerDroppedCount < currentBallCount) {
-	// 		const addCount = currentBallCount - computerDroppedCount;
-	// 		console.log("Add count: ", addCount);
-	// 		return addCount;
-	// 	}
-	// 	return 0;
-	// }
 
 	/**
 	 * Removes balls from {@link ballsRef}
 	 * @param index The zero-based location in the array from which to start removing balls.
 	 * @param count The number of balls to remove.
 	 */
-	function removeBalls(index: number, count: number) {
+	function removeBalls(index: number, count: number): Ball[] {
 		ballsRef.current.splice(index, count);
+		return ballsRef.current;
 	}
 
 	/**
@@ -141,7 +97,6 @@ export default function App() {
 	 */
 	function clearBalls() {
 		removeBalls(0, ballsRef.current.length);
-		setCurrentBallCount(0);
 	}
 
 	return (
@@ -149,7 +104,6 @@ export default function App() {
 			<div>
 				<OptionsUI changeShape={setCurrentShape}
 					changeBallShape={setCurrentBallShape}
-					changeBallCount={setCurrentBallCount}
 					changeBallSize={setCurrentBallSize}
 					changeBoundarySize={setCurrentBoundarySize}
 					changeSegments={setSegments}
@@ -163,7 +117,6 @@ export default function App() {
 					boundaryShapes={BoundaryShapes}
 					currentShape={currentShape}
 					currentBallShape={currentBallShape}
-					currentBallCount={currentBallCount}
 					currentBallSize={currentBallSize}
 					currentBoundarySize={currentBoundarySize}
 					segments={segments}
@@ -179,12 +132,10 @@ export default function App() {
 					addForce={addForce}
 					addBall={addBall}
 					removeBalls={removeBalls}
-					// addOrRemoveBalls={removeComputerDroppedOrGetNumOfBallsToAdd}
 					balls={ballsRef.current}
 					shape={currentShape}
 					segments={segments}
 					ballShape={currentBallShape}
-					ballCount={currentBallCount}
 					ballSize={currentBallSize}
 					boundarySize={currentBoundarySize}
 					isRaycastingEnabled={isRaycastingEnabled}

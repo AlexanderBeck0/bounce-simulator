@@ -65,11 +65,13 @@ export default class Drawer {
      */
     private drawCircle(position: Vector, size: number, segments?: number): Vector[] {
         const circleVertices = this.calculateVertices("Circle", position, size, segments);
+        this.p5.push();
         this.p5.beginShape();
         for (let i = 0; i < circleVertices.length; i++) {
             this.p5.vertex(circleVertices[i].x, circleVertices[i].y);
         }
         this.p5.endShape(this.p5.CLOSE);
+        this.p5.pop();
         return circleVertices;
     }
 

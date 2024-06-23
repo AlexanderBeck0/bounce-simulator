@@ -7,7 +7,6 @@ import { P5CanvasInstance } from "@p5-wrapper/react";
 interface OptionsUIProps {
     changeShape: (newShape: BoundaryShape) => void;
     changeBallShape: (newShape: Shape) => void;
-    changeBallCount: (newCount: number) => void;
     changeBallSize: (newSize: number) => void;
     changeBoundarySize: (newSize: number) => void;
     changeSegments: (newCount: number) => void;
@@ -21,7 +20,6 @@ interface OptionsUIProps {
     boundaryShapes: BoundaryShape[]
     currentShape?: BoundaryShape;
     currentBallShape?: Shape;
-    currentBallCount?: number;
     currentBallSize?: number;
     currentBoundarySize?: number;
     segments?: number;
@@ -187,60 +185,45 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         <div className={props.className}>
             <div className="flex flex-col max-w-2xl">
                 <div className="flex flex-nowrap items-center mb-1">
-                    <div className="flex space-x-1">
-                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
-                            <div className="label">
-                                <span className="label-text">Boundary Shape</span>
-                            </div>
-                            <select className="select select-bordered"
-                                onChange={(val) => props.changeShape(val.currentTarget.value as BoundaryShape)}
-                                value={props.currentShape}>
-                                <option disabled>Boundary Shape</option>
-                                {props.boundaryShapes.map((shape, index) => {
-                                    return <option key={index} value={shape as Shape}>{shape}</option>
-                                })}
-                            </select>
+                    <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/2"}`}>
+                        <div className="label">
+                            <span className="label-text">Boundary Shape</span>
                         </div>
-                        <div className={`flex flex-col flex-initial basis-1/4 ${props.currentShape === "Circle" ? "visible" : "hidden"}`}>
-                            <div className="label">
-                                <span className="label-text">Segments</span>
-                            </div>
-                            <input type="number" placeholder="Segments"
-                                className="input input-bordered w-full"
-                                value={props.segments} min={2} max={1000}
-                                onChange={(val) => {
-                                    forceMinimumOfZero(val);
-                                    props.changeSegments(val.currentTarget.valueAsNumber);
-                                }}
-                                autoComplete="off" />
+                        <select className="select select-bordered"
+                            onChange={(val) => props.changeShape(val.currentTarget.value as BoundaryShape)}
+                            value={props.currentShape}>
+                            <option disabled>Boundary Shape</option>
+                            {props.boundaryShapes.map((shape, index) => {
+                                return <option key={index} value={shape as Shape}>{shape}</option>
+                            })}
+                        </select>
+                    </div>
+                    {props.currentShape === "Circle" && (<div className={"flex flex-col flex-initial basis-1/3"}>
+                        <div className="label">
+                            <span className="label-text">Segments</span>
                         </div>
-                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
-                            <div className="label">
-                                <span className="label-text">Ball Shape</span>
-                            </div>
-                            <select
-                                className="select select-bordered"
-                                onChange={(val) => props.changeBallShape(val.currentTarget.value as Shape)}
-                                value={props.currentBallShape}>
-                                <option disabled>Ball Shape</option>
-                                {props.shapes.map((shape, index) => {
-                                    return <option key={index} value={shape as Shape}>{shape}</option>
-                                })}
-                            </select>
+                        <input type="number" placeholder="Segments"
+                            className="input input-bordered w-full"
+                            value={props.segments} min={2} max={1000}
+                            onChange={(val) => {
+                                forceMinimumOfZero(val);
+                                props.changeSegments(val.currentTarget.valueAsNumber);
+                            }}
+                            autoComplete="off" />
+                    </div>)}
+                    <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/2"}`}>
+                        <div className="label">
+                            <span className="label-text">Ball Shape</span>
                         </div>
-                        <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/4" : "basis-1/3"}`}>
-                            <div className="label">
-                                <span className="label-text">Number of balls</span>
-                            </div>
-                            <input type="number" placeholder="Number of balls"
-                                className="input input-bordered w-full"
-                                value={props.currentBallCount} min={0}
-                                onChange={(val) => {
-                                    forceMinimumOfZero(val);
-                                    props.changeBallCount(val.currentTarget.valueAsNumber)
-                                }}
-                                autoComplete="off" />
-                        </div>
+                        <select
+                            className="select select-bordered"
+                            onChange={(val) => props.changeBallShape(val.currentTarget.value as Shape)}
+                            value={props.currentBallShape}>
+                            <option disabled>Ball Shape</option>
+                            {props.shapes.map((shape, index) => {
+                                return <option key={index} value={shape as Shape}>{shape}</option>
+                            })}
+                        </select>
                     </div>
                 </div>
                 <div className="flex flex-row flex-nowrap space-x-1">
@@ -310,9 +293,6 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                         </div>
                     </CheckboxList>
                 </div>
-                {/*<div className="flex-initial flex-nowrap">
-                    <CheckboxList title="Open Collisions" openTitle="Close Collisions" checkboxes={props.collisions} onCheckboxChange={handleCheckboxChange} />
-                </div>*/}
                 <div className="flex flex-row flex-nowrap mt-1 select-none space-x-1">
                     <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
                         <span className="label-text">Enable Ray-casting lines</span>

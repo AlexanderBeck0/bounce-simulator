@@ -55,9 +55,11 @@ export default class Ball {
     }
 
     public display(): void {
+        this.p5.push();
         this.p5.noStroke();
         this.p5.fill(0);
         this.drawer.draw(this.shape, this.position, this.size);
+        this.p5.pop();
     }
 
     // #region Movement
@@ -129,7 +131,7 @@ export default class Ball {
         // Update the max velocity
         if (this.maxVelocity.mag() < this.velocity.mag()) {
             this.maxVelocity = this.velocity.copy();
-            console.log(this.maxVelocity.mag())
+            // console.log(this.maxVelocity.mag())
         }
 
         this.acceleration.mult(0);
@@ -141,7 +143,7 @@ export default class Ball {
             const collision = this.edgeIntersectsPoint(vertices[i], vertices[j], nextPosition, this.size, enableRaycasting);
             if (collision) {
                 const edge = Vector.sub(vertices[j], vertices[i]);
-                const normal = this.p5.createVector(-edge.y, -edge.x).normalize();
+                const normal = this.p5.createVector(-edge.y, edge.x).normalize();
                 return { collided: true, normal: normal };
             }
         }
@@ -244,8 +246,8 @@ export default class Ball {
                     ball.velocity.add(adjustedBallVelocity);
                     ball.position.sub(adjustedBallPosition);
                 }
-
             }
+            
         }
     }
     // #endregion

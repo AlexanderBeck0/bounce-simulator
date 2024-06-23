@@ -9,12 +9,10 @@ interface P5CanvasProps {
     addForce: (force: Force) => void;
     addBall: (ball: Ball) => void;
     removeBalls: (index: number, count: number) => void;
-    // addOrRemoveBalls: () => number;
     balls: Ball[];
     shape: BoundaryShape;
     segments: number;
     ballShape: Shape;
-    ballCount: number;
     ballSize: number;
     boundarySize: number;
     isRaycastingEnabled: boolean;
@@ -40,7 +38,7 @@ export default function P5Canvas(props: P5CanvasProps) {
          */
         let forces: Force[] = [];
         if (props.forces.length > 0) forces = props.forces;
-        else forces.forEach(props.addForce);
+        // else forces.forEach(props.addForce);
 
         p5.setup = () => {
             const canvas = p5.createCanvas(600, 400, p5.WEBGL);
@@ -50,24 +48,9 @@ export default function P5Canvas(props: P5CanvasProps) {
             // if (!boundaryRef.current || props.shape !== boundaryRef.current.shape) {
             //     boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
             // }
-            if (props.balls.length > 0) {
-                props.balls.forEach(ball => {
-                    ball.display();
-                })
-            }
-
-            // const addCount = props.addOrRemoveBalls();
-
-            // for (let i = 0; i < addCount; i++) {
-            //     const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
-            //     // balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
-            //     props.addBall(new Ball(p5, props.ballShape, props.ballSize, startPosition).setIsUserDropped(false));
-            // }
-            for (let i = 0; i < props.ballCount; i++) {
-                const startPosition = p5.createVector(Math.random() * 100, Math.random() * 100);
-                // balls.push(new Ball(p5, props.ballShape, props.ballSize, startPosition));
-                props.addBall(new Ball(p5, props.ballShape, props.ballSize, startPosition).setIsUserDropped(false));
-            }
+            props.balls.forEach(ball => {
+                ball.display();
+            })
 
             canvas.elt.addEventListener("contextmenu", (e: MouseEvent) => e.preventDefault())
         }
@@ -116,7 +99,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
                     props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)).setIsUserDropped(true))
-                    // console.log(props.balls)
+                    console.log(props.balls)
                 }
                 else if (props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled) {
                     isDrawingBoundary = true
