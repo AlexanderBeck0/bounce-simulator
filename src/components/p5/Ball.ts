@@ -201,8 +201,44 @@ export default class Ball {
             }
 
 
-            if (distance <= sizeDistance) {
+            if (distance < sizeDistance) {
+                const overlap = sizeDistance - distance
+
                 const normal = Vector.sub(ball.position, this.position).normalize();
+
+                const adjustment = normal.copy().mult(overlap / 2)
+
+                const newPosition = this.position.copy().sub(adjustment)
+                let isValidPosition = true
+                for (const otherBall of balls){
+                    if (this === otherBall || ball === otherBall) continue
+                    const otherDistance = newPosition.dist(otherBall.position)
+                    const otherSizeDistance = otherBall.size + this.size
+                    if (otherDistance < otherSizeDistance){
+                        isValidPosition = false
+                        break
+                    }
+                }
+                if(isValidPosition && boundary.isPointInside(newPosition.x, newPosition.y)){
+                    this.position.set(newPosition)
+                }
+
+                const ballNewPosition = this.position.copy().sub(adjustment)
+                isValidPosition = true
+                for (const otherBall of balls){
+                    if (this === otherBall || ball === otherBall) continue
+                    const otherDistance = ballNewPosition.dist(otherBall.position)
+                    const otherSizeDistance = otherBall.size + ball.size
+                    if (otherDistance < otherSizeDistance){
+                        isValidPosition = false
+                        break
+                    }
+                }
+                if(isValidPosition && boundary.isPointInside(ballNewPosition.x, ballNewPosition.y)){
+                    ball.position.set(ballNewPosition)
+                }
+
+
                 const velocity = Vector.sub(ball.velocity, this.velocity);
                 const velocityOnNormal = Vector.dot(velocity, normal);
 
@@ -210,7 +246,7 @@ export default class Ball {
                 if (velocityOnNormal > 0) continue;
 
                 const impulse = this.p5.createVector();
-                Vector.mult(normal, 2 * velocityOnNormal / (ball.size + this.size), impulse);
+                Vector.mult(normal, -2 * velocityOnNormal / (1/ball.size + 1/this.size), impulse);
 
                 const bounce = this.p5.createVector();
                 Vector.mult(normal, sizeDistance - distance, bounce);
@@ -245,8 +281,74 @@ export default class Ball {
                     ball.position.sub(adjustedBallPosition);
                 }
             }
-            
+
         }
     }
+
+    // public checkSiblingCollision(balls: Ball[], boundary: Boundary, isCollisionRaysEnabled: boolean) {
+    //     // Get siblings within a certain radius of this ball (to improve performance)
+    //     // For now, get all balls (will improve performance later)
+    //     // https://www.gorillasun.de/blog/an-algorithm-for-particle-systems-with-collisions/
+    //     for (const ball of balls) {
+    //         if (this === ball) continue;
+    //         const distance = this.position.dist(ball.position);
+    //         const sizeDistance = ball.size + this.size;
+    //
+    //         if (isCollisionRaysEnabled) {
+    //             this.p5.push();
+    //             this.p5.stroke(this.rayColor);
+    //             this.p5.strokeWeight(Math.floor(this.size / 4));
+    //             this.p5.line(ball.position.x, ball.position.y, this.position.x, this.position.y);
+    //             this.p5.pop();
+    //         }
+    //
+    //
+    //         if (distance < sizeDistance) {
+    //             const normal = Vector.sub(ball.position, this.position).normalize();
+    //             const velocity = Vector.sub(ball.velocity, this.velocity);
+    //             const velocityOnNormal = Vector.dot(velocity, normal);
+    //
+    //             // Balls are not going in the same direction, no need to compute further
+    //             if (velocityOnNormal > 0) continue;
+    //
+    //             const impulse = this.p5.createVector();
+    //             Vector.mult(normal, -2 * velocityOnNormal / (1/ball.size + 1/this.size), impulse);
+    //
+    //             const bounce = this.p5.createVector();
+    //             Vector.mult(normal, sizeDistance - distance, bounce);
+    //
+    //             const adjustedVelocity = this.p5.createVector();
+    //             Vector.div(impulse, this.size, adjustedVelocity);
+    //
+    //             const adjustedBallVelocity = this.p5.createVector();
+    //             Vector.div(impulse, ball.size, adjustedBallVelocity);
+    //
+    //             const adjustedPosition = this.p5.createVector();
+    //             Vector.div(bounce, this.size, adjustedPosition);
+    //
+    //             const adjustedBallPosition = this.p5.createVector();
+    //             Vector.div(bounce, ball.size, adjustedBallPosition);
+    //
+    //             if (boundary.isPointInside(this.position.x + adjustedPosition.x, this.position.y + adjustedPosition.y)) {
+    //                 this.velocity.add(adjustedVelocity);
+    //                 this.position.sub(adjustedPosition);
+    //             }
+    //             else {
+    //                 this.velocity.sub(adjustedVelocity);
+    //                 this.position.add(adjustedPosition);
+    //             }
+    //
+    //             if (boundary.isPointInside(ball.position.x + adjustedBallPosition.x, ball.position.y + adjustedBallPosition.y)) {
+    //                 ball.velocity.sub(adjustedBallVelocity);
+    //                 ball.position.add(adjustedBallPosition);
+    //             }
+    //             else {
+    //                 ball.velocity.add(adjustedBallVelocity);
+    //                 ball.position.sub(adjustedBallPosition);
+    //             }
+    //         }
+    //
+    //     }
+    // }
     // #endregion
 }
