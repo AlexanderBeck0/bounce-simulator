@@ -41,37 +41,13 @@ export default function P5Canvas(props: P5CanvasProps) {
         p5.setup = () => {
             const canvas = p5.createCanvas(600, 400, p5.WEBGL);
             boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
-            // Note: This is broken. Changing anything with the same shape hides the shape
-            // if (!boundaryRef.current || props.shape !== boundaryRef.current.shape) {
-            //     boundaryRef.current = new Boundary(p5, props.shape, props.boundarySize, p5.createVector(0, 0));
-            // }
-            
-
             canvas.elt.addEventListener("contextmenu", (e: MouseEvent) => e.preventDefault())
         }
-
-        // p5.mousePressed = () => {
-        //     // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled){
-        //     //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
-        //     // }
-        //
-        //     // if(props.shape == "Draw") console.log("Drawing")
-        //     // isDrawing = true
-        //
-        //     if(props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled){
-        //         isDrawingBoundary = true
-        //         boundaryRef.current!.clearDrawnBoundary()
-        //         const x = p5.mouseX - p5.width / 2
-        //         const y = p5.mouseY - p5.height / 2
-        //         lastVertex = p5.createVector(x, y)
-        //     }
-        // }
 
         p5.draw = () => {
             p5.background(100);
             p5.normalMaterial();
 
-            // const edges = boundary.createBoundary(props.segments);
             const edges = boundaryRef.current!.createBoundary(props.segments);
 
             if (isDrawingBoundary && boundaryRef.current && lastVertex) {
@@ -101,7 +77,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 if (p5.mouseButton === p5.RIGHT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
-                    props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)).setIsUserDropped(true))
+                    props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)))
                 }
                 else if (props.shape === "Draw" && p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && !props.isBallDroppingEnabled) {
                     isDrawingBoundary = true
@@ -118,9 +94,6 @@ export default function P5Canvas(props: P5CanvasProps) {
             }
 
             p5.mouseDragged = () => {
-                // if (p5.mouseButton === p5.LEFT && props.shape === "Draw" && !props.isBallDroppingEnabled) {
-                //     drawnBoundary.push(p5.createVector(p5.mouseX, p5.mouseY))
-                // }
                 if (isDrawingBoundary && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
@@ -132,15 +105,10 @@ export default function P5Canvas(props: P5CanvasProps) {
                 if (p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && props.isBallDroppingEnabled) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
-                    props.addBall(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)).setIsUserDropped(true))
+                    props.addBall(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
                 }
             }
         }
-
-
-
-        //p5.updateWithProps = props => {
-        //};
     }
 
     return (
