@@ -182,7 +182,8 @@ export default class Ball {
         const distance = Vector.dist(point, closest);
 
         // Note: This is SUPER laggy (did not realize when I wrote this because I was not on my laptop)
-        if (enableRaycasting && distance > radius && distance < 150) {
+        // Hard-coded the this.velocity.y !== 0.5 due to interrest of time and as a super simple way to somewhat fix a visual glitch
+        if (enableRaycasting && distance > radius && distance < 150 && this.velocity.y !== 0.5) {
             this.p5.push();
             this.p5.fill(this.rayColor);
             this.p5.stroke(this.rayColor);
