@@ -232,7 +232,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                             <div className="label">
                                 <span className="label-text">Size of Boundary</span>
                             </div>
-                            <input type="number" placeholder="Size of boundary"
+                            <input type="number" placeholder="Size of Boundary"
                                 className="input input-bordered"
                                 value={props.currentBoundarySize} min={0}
                                 onChange={(val) => {
@@ -245,9 +245,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     )}
                     <div className="flex flex-col w-1/2">
                         <div className="label">
-                            <span className="label-text">Size of balls</span>
+                            <span className="label-text">Size of Balls</span>
                         </div>
-                        <input type="number" placeholder="Size of balls"
+                        <input type="number" placeholder="Size of Balls"
                             className="input input-bordered"
                             value={props.currentBallSize} min={0}
                             onChange={(val) => {
@@ -294,23 +294,23 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     </CheckboxList>
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none space-x-1">
-                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
+                    <label className={`label ${props.currentShape !== "Draw" ? "basis-1/3" : "basis-1/2"} cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200`}>
                         <span className="label-text">Enable Ray-casting lines</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
                             checked={props.isRaycastingEnabled}
                             onChange={val => props.changeRayCasting(val.currentTarget.checked)} />
                     </label>
-                    <label className="label basis-1/3 cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200">
+                    <label className={`label ${props.currentShape !== "Draw" ? "basis-1/3" : "basis-1/2"} cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200`}>
                         <span className="label-text">Enable Collision Rays</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
                             checked={props.isCollisionRaysEnabled}
                             onChange={val => props.changeCollisionRays(val.currentTarget.checked)} />
                     </label>
-                    <label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
+                    {props.currentShape !== "Draw" && (<label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
                         <span className="label-text">Drop Balls on Click</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
-                            onChange={val => props.changeBallDropping(val.currentTarget.checked)} />
-                    </label>
+                            checked={props.isBallDroppingEnabled} onChange={val => props.changeBallDropping(val.currentTarget.checked)} />
+                    </label>)}
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none space-x-1">
                     <button onClick={props.clearBalls} className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">Clear Balls</button>
