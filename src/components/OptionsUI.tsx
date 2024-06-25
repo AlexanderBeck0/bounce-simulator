@@ -64,7 +64,6 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         }
 
         removeAllErrorsInAddForce();
-        toggleIsNewForceUIOpened();
         const newForce: Force = {
             name: addForceValues[0].toString(),
             value: (p5Reference: P5CanvasInstance, size: number) => p5Reference.createVector(size * +addForceValues[1], size * +addForceValues[2]),
@@ -72,6 +71,7 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
         };
         props.addForce(newForce);
         setAddForceValues([]);
+        toggleIsNewForceUIOpened();
     }
 
     /**

@@ -105,7 +105,7 @@ export default function P5Canvas(props: P5CanvasProps) {
                 if (p5.mouseButton === p5.LEFT && p5.mouseX >= 0 && p5.mouseX <= p5.width && p5.mouseY >= 0 && p5.mouseY <= p5.height && boundaryRef.current?.shape !== "Draw" && props.isBallDroppingEnabled) {
                     const x = p5.mouseX - p5.width / 2
                     const y = p5.mouseY - p5.height / 2
-                    props.addBall(new Ball(p5, props.ballShape, 5, p5.createVector(x, y)))
+                    props.addBall(new Ball(p5, props.ballShape, props.ballSize, p5.createVector(x, y)))
                 }
             }
         }
