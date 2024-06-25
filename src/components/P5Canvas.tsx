@@ -24,14 +24,14 @@ interface P5CanvasProps {
     className?: string;
     children?: ReactNode;
 }
-let rerenders = 0;
+// let rerenders = 0;
 export default function P5Canvas(props: P5CanvasProps) {
     const boundaryRef = useRef<Boundary | null>(null);
 
     const sketch: Sketch = (p5) => {
         let isDrawingBoundary = false
         let lastVertex: Vector | undefined
-        console.log(rerenders++)
+        // console.log(rerenders++)
         /**
          * @tutorial force To add a new force, simply add a new object with the name, value, and enabled fields.
          */
