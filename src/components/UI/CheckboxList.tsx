@@ -52,7 +52,7 @@ export default function CheckboxList(props: CheckboxListProps): JSX.Element {
     return (
         <div className={props.className}>
             <div tabIndex={0} className="collapse collapse-arrow border border-base-300 bg-base-200">
-                <input type="checkbox" className="peer" onClick={toggleDropdown} />
+                <input type="checkbox" className="peer" onClick={toggleDropdown} aria-label={isDropdownOpen ? (props.openTitle || props.title) : props.title} />
                 <div className="collapse-title select-none font-medium">
                     {isDropdownOpen ? (props.openTitle || props.title) : props.title}
                 </div>
@@ -64,7 +64,7 @@ export default function CheckboxList(props: CheckboxListProps): JSX.Element {
                                     <span className="label-text text-gray-700">{checkbox.name}</span>
                                     <input type="checkbox" checked={checkbox.enabled} onChange={handleCheckboxChange(checkbox.name)} className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200" />
                                 </div>
-                                <button className="btn btn-outline btn-square btn-sm btn-error" onClick={() => removeCheckboxByName(checkbox.name)}>
+                                <button className="btn btn-outline btn-square btn-sm btn-error" onClick={() => removeCheckboxByName(checkbox.name)} aria-label={`Remove ${checkbox.name}`}>
                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
                                 </button>
                             </label>

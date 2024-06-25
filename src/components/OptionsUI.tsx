@@ -187,9 +187,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                 <div className="flex flex-nowrap items-center mb-1">
                     <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/2"}`}>
                         <div className="label">
-                            <span className="label-text">Boundary Shape</span>
+                            <span className="label-text" id="boundaryShapeLabel">Boundary Shape</span>
                         </div>
-                        <select className="select select-bordered"
+                        <select className="select select-bordered" aria-labelledby="boundaryShapeLabel"
                             onChange={(val) => props.changeShape(val.currentTarget.value as BoundaryShape)}
                             value={props.currentShape}>
                             <option disabled>Boundary Shape</option>
@@ -200,9 +200,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     </div>
                     {props.currentShape === "Circle" && (<div className={"flex flex-col flex-initial basis-1/3"}>
                         <div className="label">
-                            <span className="label-text">Segments</span>
+                            <span className="label-text" id="segmentsLabel">Segments</span>
                         </div>
-                        <input type="number" placeholder="Segments"
+                        <input type="number" placeholder="Segments" aria-labelledby="segmentsLabel"
                             className="input input-bordered w-full"
                             value={props.segments} min={2} max={1000}
                             onChange={(val) => {
@@ -213,10 +213,10 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     </div>)}
                     <div className={`flex flex-col ${props.currentShape === "Circle" ? "basis-1/3" : "basis-1/2"}`}>
                         <div className="label">
-                            <span className="label-text">Ball Shape</span>
+                            <span className="label-text" id="ballShapeLabel">Ball Shape</span>
                         </div>
                         <select
-                            className="select select-bordered"
+                            className="select select-bordered" aria-labelledby="ballShapeLabel"
                             onChange={(val) => props.changeBallShape(val.currentTarget.value as Shape)}
                             value={props.currentBallShape}>
                             <option disabled>Ball Shape</option>
@@ -230,9 +230,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     {props.currentShape && props.currentShape !== "Draw" && (
                         <div className="flex flex-col w-1/2">
                             <div className="label">
-                                <span className="label-text">Size of Boundary</span>
+                                <span className="label-text" id="boundarySizeLabel">Size of Boundary</span>
                             </div>
-                            <input type="number" placeholder="Size of Boundary"
+                            <input type="number" placeholder="Size of Boundary" aria-labelledby="boundarySizeLabel"
                                 className="input input-bordered"
                                 value={props.currentBoundarySize} min={0}
                                 onChange={(val) => {
@@ -245,9 +245,9 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                     )}
                     <div className="flex flex-col w-1/2">
                         <div className="label">
-                            <span className="label-text">Size of Balls</span>
+                            <span className="label-text" id="ballSizeLabel">Size of Balls</span>
                         </div>
-                        <input type="number" placeholder="Size of Balls"
+                        <input type="number" placeholder="Size of Balls" aria-labelledby="ballSizeLabel"
                             className="input input-bordered"
                             value={props.currentBallSize} min={0}
                             onChange={(val) => {
@@ -263,57 +263,58 @@ export default function OptionsUI(props: OptionsUIProps): JSX.Element {
                             {isNewForceUIOpened && (
                                 <div className="flex flex-col basis-1/4">
                                     <div className="label">
-                                        <span className="label-text">Force Name</span>
+                                        <span className="label-text" id="forceNameLabel">Force Name</span>
                                     </div>
-                                    <input type="text" ref={addForceNameRef} className="input input-bordered w-full"
+                                    <input type="text" ref={addForceNameRef} className="input input-bordered w-full" aria-labelledby="forceNameLabel"
                                         onChange={(val) => forceNameChangeHandler(val.currentTarget.value)} autoComplete="off" />
                                 </div>
                             )}
                             {isNewForceUIOpened && (
                                 <div className="flex flex-col basis-1/4">
                                     <div className="label">
-                                        <span className="label-text">Force on X-Axis</span>
+                                        <span className="label-text" id="xAxisForceLabel">Force on X-Axis</span>
                                     </div>
-                                    <input type="number" ref={addForceXRef} min={-2} className="input input-bordered w-full" autoComplete="off"
+                                    <input type="number" ref={addForceXRef} min={-2} aria-labelledby="xAxisForceLabel" className="input input-bordered w-full" autoComplete="off"
                                         onChange={(val) => forceXAxisChangeHandler(val.currentTarget.valueAsNumber)} />
                                 </div>
                             )}
                             {isNewForceUIOpened && (
                                 <div className="flex flex-col basis-1/4">
                                     <div className="label">
-                                        <span className="label-text">Force on Y-Axis</span>
+                                        <span className="label-text" id="yAxisForceLabel">Force on Y-Axis</span>
                                     </div>
-                                    <input type="number" ref={addForceYRef} min={-2} className="input input-bordered w-full" autoComplete="off"
+                                    <input type="number" ref={addForceYRef} min={-2} aria-labelledby="yAxisForceLabel" className="input input-bordered w-full" autoComplete="off"
                                         onChange={(val) => forceYAxisChangeHandler(val.currentTarget.valueAsNumber)} />
                                 </div>
                             )}
                             <div className={`${isNewForceUIOpened ? "basis-1/4" : "basis-full"}`}>
-                                <button className={`btn border-neutral w-full h-full`} onClick={addForceOrToggleDropdownUI}>Add a new force</button>
+                                <button className={`btn border-neutral w-full h-full`} onClick={addForceOrToggleDropdownUI} aria-label="Add a new force">Add a new force</button>
                             </div>
                         </div>
                     </CheckboxList>
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none space-x-1">
                     <label className={`label ${props.currentShape !== "Draw" ? "basis-1/3" : "basis-1/2"} cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200`}>
-                        <span className="label-text">Enable Ray-casting lines</span>
+                        <span className="label-text" id="enableRayCastingLabel">Enable Ray-casting lines</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
-                            checked={props.isRaycastingEnabled}
+                            checked={props.isRaycastingEnabled} aria-labelledby="enableRayCastingLabel"
                             onChange={val => props.changeRayCasting(val.currentTarget.checked)} />
                     </label>
                     <label className={`label ${props.currentShape !== "Draw" ? "basis-1/3" : "basis-1/2"} cursor-pointer items-center border border-base-300 rounded-md hover:bg-gray-200 active:bg-gray-300 transition-colors duration-200`}>
-                        <span className="label-text">Enable Collision Rays</span>
+                        <span className="label-text" id="enableCollisionRaysLabel">Enable Collision Rays</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
-                            checked={props.isCollisionRaysEnabled}
+                            checked={props.isCollisionRaysEnabled} aria-labelledby="enableCollisionRaysLabel"
                             onChange={val => props.changeCollisionRays(val.currentTarget.checked)} />
                     </label>
                     {props.currentShape !== "Draw" && (<label className="label basis-1/3 cursor-pointer items-center hover:bg-gray-200 border border-base-300 rounded-md transition-colors duration-200">
-                        <span className="label-text">Drop Balls on Click</span>
+                        <span className="label-text" id="dropBallsOnClickLabel">Drop Balls on Click</span>
                         <input type="checkbox" className="checkbox h-5 w-5 border-gray-400 rounded transition-colors duration-200"
+                            aria-labelledby="dropBallsOnClickLabel"
                             checked={props.isBallDroppingEnabled} onChange={val => props.changeBallDropping(val.currentTarget.checked)} />
                     </label>)}
                 </div>
                 <div className="flex flex-row flex-nowrap mt-1 select-none space-x-1">
-                    <button onClick={props.clearBalls} className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">Clear Balls</button>
+                    <button onClick={props.clearBalls} className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100" aria-label="Clear Balls">Clear Balls</button>
                     {/*<button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
                     <button className="flex flex-row basis-1/5 btn btn-outline active:bg-gray-100">DUMMY BUTTON</button>
